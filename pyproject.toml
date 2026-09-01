@@ -1,0 +1,26 @@
+[project]
+name = "imersos"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Giuliana Batistella",email = "giulianabatixtella@gmail.com"}
+    {name = "Kauan de Abreu Carvalho",email = "kauan.carvalho@gec.inatel.br"}
+    {name = "Camile Brunieri Laraia",email = "camile.laraia@ges.inatel.br"}
+    {name = "Júlia Seixas Souza",email = "julia.seixas@gec.inatel.br"}
+    {name = "Luis Otávio Garcia Godoy da Costa",email = "luis.costa@ges.inatel.br"}
+]
+requires-python = ">=3.13"
+dependencies = [
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.1.1,<10.0.0)",
+    "pytest-mock (>=3.15.1,<4.0.0)",
+    "pytest-cov (>=7.1.0,<8.0.0)"
+]
