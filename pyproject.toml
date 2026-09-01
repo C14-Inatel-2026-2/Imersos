@@ -4,6 +4,10 @@ version = "0.1.0"
 description = ""
 authors = [
     {name = "Giuliana Batistella",email = "giulianabatixtella@gmail.com"}
+    {name = "Kauan de Abreu Carvalho",email = "kauan.carvalho@gec.inatel.br"}
+    {name = "Camile Brunieri Laraia",email = "camile.laraia@ges.inatel.br"}
+    {name = "Júlia Seixas Souza",email = "julia.seixas@gec.inatel.br"}
+    {name = "Luis Otávio Garcia Godoy da Costa",email = "luis.costa@ges.inatel.br"}
 ]
 requires-python = ">=3.13"
 dependencies = [
