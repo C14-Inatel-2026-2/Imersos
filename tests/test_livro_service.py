@@ -42,6 +42,8 @@ def test_cadastrar_livro_isbn_duplicado(mocker, livro_dict):
             "Outro Titulo", "Outro Autor", "9780451524935", "Genero", 2000, "lendo"
         )
 
+    repo.salvar.assert_not_called()
+
 
 def test_cadastrar_livro_titulo_invalido(mocker):
     repo = mocker.Mock()
@@ -51,3 +53,5 @@ def test_cadastrar_livro_titulo_invalido(mocker):
 
     with pytest.raises(ValueError):
         service.cadastrar_livro("", "Autor", "1234567890", "Genero", 2000, "lendo")
+
+    repo.salvar.assert_not_called()
