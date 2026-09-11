@@ -44,3 +44,21 @@ def test_carregar_json_corrompido(tmp_path):
     resultado = repo.carregar()
 
     assert resultado == []
+
+def test_salvar_cria_diretorio_pai(tmp_path):
+    arquivo = tmp_path / "data" / "livros.json"
+
+    repo = LivroRepository(arquivo)
+
+    livros = [
+        {
+            "titulo": "O Hobbit",
+            "autor": "J. R. R. Tolkien",
+            "isbn": "9788595084742"
+        }
+    ]
+
+    repo.salvar(livros)
+
+    assert arquivo.exists()
+    assert repo.carregar() == livros
