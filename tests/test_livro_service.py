@@ -1,6 +1,6 @@
 import pytest
+from models.livro import Livro
 from repository.livro_repository import LivroRepository
-
 from services.livro_service import LivroService
 
 
@@ -107,6 +107,33 @@ def test_cadastrar_livro_mantem_livros_existentes(mocker):
     assert livros_salvos[0]["titulo"] == "1984"
     assert livros_salvos[1]["titulo"] == "O Hobbit"
 
+def test_cadastrar_livro_titulo_vazio_sem_repositorio():
+        service = LivroService(None)
+
+        with pytest.raises(ValueError, match="titulo"):
+            service.cadastrar_livro(
+                "", "George Orwell", "9780451524935", "Distopia", 1949, "lendo"
+            )
+
+
+def test_para_dict_converte_livro():
+    service = LivroService(None)
+    livro = Livro(
+        "1984", "George Orwell", "9780451524935", "Distopia", 1949, "lendo"
+    )
+
+    resultado = service._para_dict(livro)
+
+    assert resultado == {
+        "titulo": "1984",
+        "autor": "George Orwell",
+        "isbn": "9780451524935",
+        "genero": "Distopia",
+        "ano": 1949,
+        "status_leitura": "lendo",
+    }
+
+
 def test_cadastrar_livro_persiste_no_arquivo(tmp_path):
     arquivo = tmp_path / "livros.json"
     service = LivroService(LivroRepository(arquivo))
@@ -121,7 +148,7 @@ def test_cadastrar_livro_persiste_no_arquivo(tmp_path):
     assert livros[0]["titulo"] == "1984"
     assert livros[0]["isbn"] == "9780451524935"
 
-def test_cadastrar_livro_isbn_duplicado_sem_mock(tmp_path):
+def test_cadastrar_livro_isbn_duplicado_integracao(tmp_path):
     arquivo = tmp_path / "livros.json"
     repo = LivroRepository(arquivo)
     service = LivroService(repo)
@@ -137,7 +164,7 @@ def test_cadastrar_livro_isbn_duplicado_sem_mock(tmp_path):
 
     assert len(repo.carregar()) == 1
 
-def test_cadastrar_livro_titulo_invalido_sem_mock(tmp_path):
+def test_cadastrar_livro_titulo_invalido_integracao(tmp_path):
     arquivo = tmp_path / "livros.json"
     repo = LivroRepository(arquivo)
     service = LivroService(repo)
