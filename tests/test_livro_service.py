@@ -1,4 +1,5 @@
 import pytest
+from repository.livro_repository import LivroRepository
 
 from services.livro_service import LivroService
 
@@ -105,3 +106,43 @@ def test_cadastrar_livro_mantem_livros_existentes(mocker):
     assert len(livros_salvos) == 2
     assert livros_salvos[0]["titulo"] == "1984"
     assert livros_salvos[1]["titulo"] == "O Hobbit"
+
+def test_cadastrar_livro_persiste_no_arquivo(tmp_path):
+    arquivo = tmp_path / "livros.json"
+    service = LivroService(LivroRepository(arquivo))
+
+    service.cadastrar_livro(
+        "1984", "George Orwell", "9780451524935", "Distopia", 1949, "lendo"
+    )
+
+    livros = LivroRepository(arquivo).carregar()
+
+    assert len(livros) == 1
+    assert livros[0]["titulo"] == "1984"
+    assert livros[0]["isbn"] == "9780451524935"
+
+def test_cadastrar_livro_isbn_duplicado_sem_mock(tmp_path):
+    arquivo = tmp_path / "livros.json"
+    repo = LivroRepository(arquivo)
+    service = LivroService(repo)
+
+    service.cadastrar_livro(
+        "1984", "George Orwell", "9780451524935", "Distopia", 1949, "lendo"
+    )
+
+    with pytest.raises(ValueError):
+        service.cadastrar_livro(
+            "Outro Titulo", "Outro Autor", "9780451524935", "Genero", 2000, "lendo"
+        )
+
+    assert len(repo.carregar()) == 1
+
+def test_cadastrar_livro_titulo_invalido_sem_mock(tmp_path):
+    arquivo = tmp_path / "livros.json"
+    repo = LivroRepository(arquivo)
+    service = LivroService(repo)
+
+    with pytest.raises(ValueError):
+        service.cadastrar_livro("", "Autor", "1234567890", "Genero", 2000, "lendo")
+
+    assert repo.carregar() == []
