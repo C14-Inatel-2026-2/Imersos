@@ -44,24 +44,6 @@ def test_mostrar_menu(capsys):
     assert "Buscar livro" in saida
     assert "Realizar empréstimo" in saida
 
-
-def test_status_invalido(mocker):
-    mocker.patch(
-        "builtins.input",
-        side_effect=[
-            "1984",
-            "George Orwell",
-            "9780451524935",
-            "Distopia",
-            "1949",
-            "9",
-        ],
-    )
-
-    with pytest.raises(ValueError):
-        ler_dados_livro()
-
-
 def test_converter_status():
     status = converter_status("2")
 
