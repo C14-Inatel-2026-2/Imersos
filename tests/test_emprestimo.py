@@ -82,3 +82,23 @@ def test_livro_nao_emprestado_nao_deve_ter_dados_de_emprestimo():
             data_emprestimo=date(2026, 9, 10),
             data_devolucao_prevista=date(2026, 9, 20),
         )
+
+def test_validacao_e_chamada_ao_criar_emprestimo(mocker):
+    validar_spy = mocker.spy(Emprestimo, "_validar")
+
+    emprestimo = Emprestimo()
+
+    validar_spy.assert_called_once_with(emprestimo)
+
+
+def test_erro_da_validacao_e_propagado(mocker):
+    validar_mock = mocker.patch.object(
+        Emprestimo,
+        "_validar",
+        side_effect=ValueError("erro simulado")
+    )
+
+    with pytest.raises(ValueError, match="erro simulado"):
+        Emprestimo()
+
+    validar_mock.assert_called_once()
