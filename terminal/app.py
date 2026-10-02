@@ -13,6 +13,18 @@ def mostrar_menu():
 def ler_opcao():
     return input("Escolha uma opção: ")
 
+def converter_status(opcao_status):
+    status = {
+        "1": "nao_iniciado",
+        "2": "lendo",
+        "3": "concluido",
+    }.get(opcao_status)
+
+    if status is None:
+        raise ValueError("Status de leitura inválido")
+
+    return status
+
 def ler_dados_livro():
     titulo = input("Título: ")
     autor = input("Autor: ")
@@ -26,15 +38,7 @@ def ler_dados_livro():
     print("3 - Concluído")
 
     opcao_status = input("Status: ")
-
-    status = {
-        "1": "nao_iniciado",
-        "2": "lendo",
-        "3": "concluido",
-    }.get(opcao_status)
-
-    if status is None:
-        raise ValueError("Status de leitura inválido")
+    status = converter_status(opcao_status)
 
     return {
         "titulo": titulo,
