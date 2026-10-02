@@ -1,4 +1,5 @@
-from terminal.app import ler_opcao, ler_dados_livro, mostrar_menu
+
+from terminal.app import ler_opcao, ler_dados_livro, mostrar_menu, converter_status
 import pytest
 
 def test_ler_opcao(mocker):
@@ -43,19 +44,17 @@ def test_mostrar_menu(capsys):
     assert "Buscar livro" in saida
     assert "Realizar empréstimo" in saida
 
+def test_converter_status():
+    status = converter_status("2")
 
-def test_status_invalido(mocker):
-    mocker.patch(
-        "builtins.input",
-        side_effect=[
-            "1984",
-            "George Orwell",
-            "9780451524935",
-            "Distopia",
-            "1949",
-            "9",
-        ],
-    )
+    assert status == "lendo"
 
-    with pytest.raises(ValueError):
-        ler_dados_livro()
+
+def test_status_invalido():
+    with pytest.raises(
+        ValueError,
+        match="Status de leitura inválido",
+    ):
+        converter_status("9")
+
+
