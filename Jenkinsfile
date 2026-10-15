@@ -14,5 +14,13 @@ pipeline {
                 '''
             }
         }
+
+        stage('Testes - Emprestimo') {
+            steps {
+                sh '''
+                    poetry run pytest tests/test_emprestimo.py -v
+                '''
+            }
+        }
     }
 }
