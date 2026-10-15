@@ -1,0 +1,21 @@
+
+FROM jenkins/jenkins:lts-jdk21
+
+USER root
+
+# Instala as ferramentas necessárias para o Jenkins
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copia o Python 3.13 da imagem oficial do Python
+COPY --from=python:3.13-slim /usr/local /opt/python313
+
+# Disponibiliza Python e Poetry no PATH
+ENV PATH="/opt/python313/bin:/opt/poetry/bin:${PATH}"
+
+# Instala Poetry em um ambiente virtual próprio
+RUN /opt/python313/bin/python -m venv /opt/poetry && \
+    /opt/poetry/bin/pip install --no-cache-dir poetry==2.5.1
+
+USER jenkins

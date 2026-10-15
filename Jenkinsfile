@@ -1,11 +1,12 @@
+
 pipeline {
     agent any
 
     stages {
         stage('Build') {
             steps {
-                bat '''
-                    py --version
+                sh '''
+                    python --version
                     poetry --version
                     poetry check --lock
                     poetry install --no-root
