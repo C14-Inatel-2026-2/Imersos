@@ -16,5 +16,20 @@ pipeline {
                 '''
             }
         }
+
+        stage('Testes - Emprestimo') {
+            steps {
+                sh '''
+                    set -eu
+
+                    poetry run python -m pytest tests/test_emprestimo.py -v --junitxml=reports/emprestimo.xml
+                '''
+            }
+            post {
+                always {
+                    junit testResults: 'reports/emprestimo.xml', allowEmptyResults: false
+                }
+            }
+        }
     }
 }
