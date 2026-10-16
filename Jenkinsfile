@@ -31,5 +31,22 @@ pipeline {
                 }
             }
         }
+
+        stage('Testes - Services') {
+            steps {
+                sh '''
+                    set -eu
+
+                    poetry run python -m pytest tests/test_livro_service.py -v \
+                        --junitxml=reports/services.xml \
+                        --cov=services --cov-report=term
+                '''
+            }
+            post {
+                always {
+                    junit testResults: 'reports/services.xml', allowEmptyResults: false
+                }
+            }
+        }
     }
 }
