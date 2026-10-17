@@ -48,5 +48,22 @@ pipeline {
                 }
             }
         }
+
+        stage('Testes - Terminal') {
+            steps {
+                sh '''
+                    set -eu
+
+                    poetry run python -m pytest tests/test_terminal.py -v \
+                        --junitxml=reports/terminal.xml \
+                        --cov=terminal --cov-report=term
+                '''
+            }
+            post {
+                always {
+                    junit testResults: 'reports/terminal.xml', allowEmptyResults: false
+                }
+            }
+        }
     }
 }
