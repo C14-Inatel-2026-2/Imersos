@@ -104,5 +104,39 @@ pipeline {
                 }
             }
         }
+
+        stage('Relatorio de Cobertura') {
+            steps {
+                sh '''
+                    set -eu
+
+                    poetry run python -m pytest tests/ -v \
+                        --junitxml=reports/testes-completos.xml \
+                        --cov=models \
+                        --cov=repository \
+                        --cov=services \
+                        --cov=terminal \
+                        --cov-report=term-missing \
+                        --cov-report=html:reports/htmlcov \
+                        --cov-report=xml:reports/coverage.xml
+                '''
+            }
+
+            post {
+                always {
+                    publishHTML(target: [
+                        reportDir: 'reports/htmlcov',
+                        reportFiles: 'index.html',
+                        reportName: 'Cobertura de Testes',
+                        keepAll: true,
+                        alwaysLinkToLastBuild: true,
+                        allowMissing: true
+                    ])
+
+                    archiveArtifacts artifacts: 'reports/**/*',
+                                    allowEmptyArchive: true
+                }
+            }
+        }
     }
 }
