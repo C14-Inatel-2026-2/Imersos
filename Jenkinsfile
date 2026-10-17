@@ -17,7 +17,6 @@ pipeline {
             }
         }
 
-
         stage('Testes - Emprestimo') {
             steps {
                 sh '''
@@ -32,7 +31,6 @@ pipeline {
                 }
             }
         }
-
 
         stage('Testes - Services') {
             steps {
@@ -51,7 +49,6 @@ pipeline {
             }
         }
 
-
         stage('Testes - Livro') {
             steps {
                 sh '''
@@ -67,10 +64,27 @@ pipeline {
             post {
                 always {
                     junit testResults: 'reports/livro.xml',
-                        allowEmptyResults: false
+                          allowEmptyResults: false
 
                     archiveArtifacts artifacts: 'reports/coverage-livro.xml',
-                                    allowEmptyArchive: true
+                                     allowEmptyArchive: true
+                }
+            }
+        }
+
+        stage('Testes - Terminal') {
+            steps {
+                sh '''
+                    set -eu
+
+                    poetry run python -m pytest tests/test_terminal.py -v \
+                        --junitxml=reports/terminal.xml \
+                        --cov=terminal --cov-report=term
+                '''
+            }
+            post {
+                always {
+                    junit testResults: 'reports/terminal.xml', allowEmptyResults: false
                 }
             }
         }
