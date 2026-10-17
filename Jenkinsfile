@@ -88,5 +88,21 @@ pipeline {
                 }
             }
         }
+        stage('Testes - Repository') {
+            steps {
+                sh '''
+                    set -eu
+
+                    poetry run python -m pytest tests/test_repository.py -v \
+                        --junitxml=reports/repository.xml \
+                        --cov=repository --cov-report=term
+                '''
+            }
+            post {
+                always {
+                    junit testResults: 'reports/repository.xml', allowEmptyResults: false
+                }
+            }
+        }
     }
 }
