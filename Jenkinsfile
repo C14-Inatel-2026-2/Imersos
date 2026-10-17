@@ -49,6 +49,29 @@ pipeline {
             }
         }
 
+        stage('Testes - Livro') {
+            steps {
+                sh '''
+                    set -eu
+
+                    poetry run python -m pytest tests/test_livro.py -v \
+                        --junitxml=reports/livro.xml \
+                        --cov=models.livro \
+                        --cov-report=term-missing \
+                        --cov-report=xml:reports/coverage-livro.xml
+                '''
+            }
+            post {
+                always {
+                    junit testResults: 'reports/livro.xml',
+                          allowEmptyResults: false
+
+                    archiveArtifacts artifacts: 'reports/coverage-livro.xml',
+                                     allowEmptyArchive: true
+                }
+            }
+        }
+
         stage('Testes - Terminal') {
             steps {
                 sh '''
