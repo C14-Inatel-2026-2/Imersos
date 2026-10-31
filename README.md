@@ -39,6 +39,17 @@ O sistema não tem interface gráfica nem banco de dados: a interação é feita
 
 **RF04 — Validação do status de leitura:** O sistema deve rejeitar qualquer status de leitura diferente das três opções permitidas.
 
+### Módulo Repository — Juh
+
+**RF05 — Persistência dos dados:** O sistema deve permitir salvar os dados dos livros em um arquivo JSON local.
+
+**RF06 — Recuperação dos dados:** O sistema deve permitir carregar os livros previamente salvos no arquivo JSON.
+
+**RF07 — Tratamento de arquivo inexistente:** Caso o arquivo de dados ainda não exista, o sistema deve iniciar com o acervo vazio sem interromper a execução.
+
+**RF08 — Tratamento de arquivo inválido:** Caso o arquivo JSON esteja corrompido ou inválido, o sistema deve retornar um acervo vazio sem interromper a execução.
+
+**RF09 — Criação do diretório de armazenamento:** Caso a pasta destinada ao arquivo de dados não exista, o sistema deve criá-la automaticamente ao salvar os livros.
 
 ## Requisitos não funcionais
 
