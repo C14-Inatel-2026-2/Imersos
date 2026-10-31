@@ -29,7 +29,16 @@ O sistema não tem interface gráfica nem banco de dados: a interação é feita
 
 ## Requisitos funcionais
 
-<!-- Kauan: consolidar aqui (RF01, RF02...). Cada um manda o RF do próprio módulo. -->
+### Módulo Livro — Kauan
+
+**RF01 — Cadastro de livros:** O sistema deve permitir cadastrar livros com título, autor, ISBN, gênero, ano de publicação e status de leitura.
+
+**RF02 — Validação dos dados:** O sistema deve impedir a criação de livros com título, autor ou ISBN vazios e ano de publicação menor ou igual a zero.
+
+**RF03 — Controle de status de leitura:** O sistema deve permitir definir o status de leitura de um livro como "não iniciado", "lendo" ou "concluído".
+
+**RF04 — Validação do status de leitura:** O sistema deve rejeitar qualquer status de leitura diferente das três opções permitidas.
+
 
 ## Requisitos não funcionais
 
