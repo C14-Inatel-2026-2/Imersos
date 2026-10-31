@@ -1,4 +1,3 @@
-
 # 📚 Imersos — Biblioteca Pessoal
 
 ## Descrição
@@ -15,7 +14,7 @@ O sistema não tem interface gráfica nem banco de dados: a interação é feita
 | `repository/` | Persistência dos dados em arquivo JSON |
 | `services/` | Regras de negócio (cadastro, busca, empréstimo) |
 | `terminal/` | Menu e interação com o usuário |
-| `tests/` | Testes automatizados com pytest |
+| `tests/` | Testes automatizados com Pytest |
 
 ### Integrantes
 
@@ -53,25 +52,36 @@ O sistema não tem interface gráfica nem banco de dados: a interação é feita
 
 ## Requisitos não funcionais
 
-RNF01 — Linguagem: A aplicação deve ser desenvolvida utilizando Python.
+**RNF01 — Linguagem:** A aplicação deve ser desenvolvida utilizando Python.
 
-RNF02 — Modularidade: O código deve possuir uma estrutura modular, separando modelos, repositórios, serviços e interface de terminal.
+**RNF02 — Modularidade:** O código deve possuir uma estrutura modular, separando modelos, repositórios, serviços e interface de terminal.
 
-RNF03 — Testabilidade: As principais funcionalidades devem possuir testes automatizados utilizando Pytest.
+**RNF03 — Testabilidade:** As principais funcionalidades devem possuir testes automatizados utilizando Pytest.
 
-RNF04 — Gerenciamento de dependências: O projeto deve utilizar Poetry para gerenciamento de dependências e ambiente virtual.
+**RNF04 — Gerenciamento de dependências:** O projeto deve utilizar Poetry para gerenciamento de dependências e ambiente virtual.
 
-RNF05 — Integração contínua: O projeto deve utilizar Jenkins para automatizar a execução da build e dos testes.
+**RNF05 — Integração contínua:** O projeto deve utilizar Jenkins para automatizar a execução da build e dos testes.
 
-RNF06 — Versionamento: O código-fonte deve ser versionado utilizando Git e hospedado no GitHub.
+**RNF06 — Versionamento:** O código-fonte deve ser versionado utilizando Git e hospedado no GitHub.
 
-RNF07 — Manutenibilidade: O código deve seguir padrões de organização e nomenclatura que facilitem sua compreensão e manutenção.
+**RNF07 — Manutenibilidade:** O código deve seguir padrões de organização e nomenclatura que facilitem sua compreensão e manutenção.
 
-RNF08 — Compatibilidade: A aplicação deve ser compatível com Python 3.13, versão utilizada no ambiente do projeto.
+**RNF08 — Compatibilidade:** A aplicação deve ser compatível com Python 3.13, versão utilizada no ambiente do projeto.
 
 ## Histórias de usuário
 
-<!-- Juh: listar aqui as histórias cadastradas no Jira (título, responsável e link do card). -->
+As histórias estão cadastradas no Jira, com critérios de aceitação no formato *Given / When / Then*.
+
+| # | História | Responsável | Épico | Status | Card |
+|---|---|---|---|---|---|
+| 1 | Cadastrar livro no acervo | Kauan | Livros | A fazer | [SCRUM-12](https://imersos.atlassian.net/browse/SCRUM-12) |
+| 2 | Persistência dos dados | Juh | Persistência | A fazer | [SCRUM-15](https://imersos.atlassian.net/browse/SCRUM-15) |
+| 3 | Buscar livros por título, autor ou gênero | Giu | Livros | A fazer | [SCRUM-9](https://imersos.atlassian.net/browse/SCRUM-9) |
+| 4 | Interface via Terminal | Labubu | Interface | A fazer | [SCRUM-14](https://imersos.atlassian.net/browse/SCRUM-14) |
+| 5 | Controlar status de leitura dos livros | Kauan | Livros | A fazer | [SCRUM-13](https://imersos.atlassian.net/browse/SCRUM-13) |
+| 6 | Registrar empréstimo de livro | Mile | Empréstimos | A fazer | [SCRUM-10](https://imersos.atlassian.net/browse/SCRUM-10) |
+
+O backlog também possui histórias planejadas para as próximas sprints, incluindo listar, editar e remover livros, filtrar por status, registrar devoluções e listar empréstimos atrasados.
 
 ## Como instalar e executar
 
@@ -132,7 +142,7 @@ O arquivo `Jenkinsfile` define os estágios responsáveis por verificar o códig
 4. **Testes - Livro:** executa os testes do modelo Livro.
 5. **Testes - Terminal:** executa os testes da interface de terminal.
 6. **Testes - Repository:** executa os testes da camada de persistência.
-7. **Relatorio de Cobertura:** executa os testes e gera relatórios de cobertura.
+7. **Relatório de Cobertura:** executa os testes e gera relatórios de cobertura.
 
 Os resultados dos testes são publicados no Jenkins utilizando relatórios JUnit, enquanto a cobertura é gerada com Pytest-Cov.
 
@@ -142,8 +152,8 @@ O ambiente Jenkins é preparado por meio do arquivo `Dockerfile.jenkins`.
 
 O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em épicos por módulo: *Livros*, *Empréstimos*, *Persistência* e *Interface*. Cada integrante cadastrou ao menos uma história de usuário com critérios de aceitação no formato *Given / When / Then*.
 
-- **Jira:** <!-- colocar o link do board aqui -->
+- **Jira:** https://imersos.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog
 - **Sprint atual:** Sprint 1 – Entrega 5
-- **Objetivo da sprint:** organizar o backlog com as histórias do sistema e concluir cadastro, persistência, busca, empréstimo e menu via terminal
+- **Objetivo da sprint:** organizar o backlog com as histórias do sistema e concluir cadastro, persistência, busca, empréstimo e menu via terminal.
 
 <!-- Giu: colocar aqui os prints do backlog e do quadro da sprint -->
