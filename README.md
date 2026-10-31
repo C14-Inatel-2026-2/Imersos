@@ -32,7 +32,21 @@ O sistema não tem interface gráfica nem banco de dados: a interação é feita
 
 ## Requisitos não funcionais
 
-<!-- Mile: escrever aqui (RNF01, RNF02...). -->
+RNF01 — Linguagem: A aplicação deve ser desenvolvida utilizando Python.
+
+RNF02 — Modularidade: O código deve possuir uma estrutura modular, separando modelos, repositórios, serviços e interface de terminal.
+
+RNF03 — Testabilidade: As principais funcionalidades devem possuir testes automatizados utilizando Pytest.
+
+RNF04 — Gerenciamento de dependências: O projeto deve utilizar Poetry para gerenciamento de dependências e ambiente virtual.
+
+RNF05 — Integração contínua: O projeto deve utilizar Jenkins para automatizar a execução da build e dos testes.
+
+RNF06 — Versionamento: O código-fonte deve ser versionado utilizando Git e hospedado no GitHub.
+
+RNF07 — Manutenibilidade: O código deve seguir padrões de organização e nomenclatura que facilitem sua compreensão e manutenção.
+
+RNF08 — Compatibilidade: A aplicação deve ser compatível com Python 3.13, versão utilizada no ambiente do projeto.
 
 ## Histórias de usuário
 
