@@ -55,7 +55,68 @@ RNF08 — Compatibilidade: A aplicação deve ser compatível com Python 3.13, v
 
 ## Como instalar e executar
 
-<!-- Labubu: escrever aqui (poetry install, como rodar o programa e os testes). -->
+### Pré-requisitos
+
+- Python 3.13 ou superior
+- Poetry
+- Git
+
+### Clonar o repositório
+
+```bash
+git clone https://github.com/C14-Inatel-2026-2/Imersos.git
+cd Imersos
+```
+
+### Instalar as dependências
+
+```bash
+poetry install --no-root
+```
+
+### Executar a aplicação
+
+A interface principal está localizada em `terminal/app.py`. A execução interativa completa depende da integração das operações do menu com as funcionalidades do sistema.
+
+### Executar os testes
+
+Para executar todos os testes automatizados:
+
+```bash
+poetry run python -m pytest tests/ -v
+```
+
+Para executar somente os testes do modelo Livro:
+
+```bash
+poetry run python -m pytest tests/test_livro.py -v
+```
+
+### Executar testes com cobertura
+
+```bash
+poetry run python -m pytest tests/ --cov=models --cov=repository --cov=services --cov=terminal --cov-report=term-missing
+```
+
+## Integração contínua — CI/CD
+
+O projeto utiliza Jenkins como ferramenta de integração contínua.
+
+O arquivo `Jenkinsfile` define os estágios responsáveis por verificar o código, executar os testes automatizados e gerar relatórios.
+
+### Estágios do pipeline
+
+1. **Build:** verifica o ambiente, instala as dependências e compila os arquivos Python.
+2. **Testes - Emprestimo:** executa os testes do modelo de empréstimos.
+3. **Testes - Services:** executa os testes dos serviços.
+4. **Testes - Livro:** executa os testes do modelo Livro.
+5. **Testes - Terminal:** executa os testes da interface de terminal.
+6. **Testes - Repository:** executa os testes da camada de persistência.
+7. **Relatorio de Cobertura:** executa os testes e gera relatórios de cobertura.
+
+Os resultados dos testes são publicados no Jenkins utilizando relatórios JUnit, enquanto a cobertura é gerada com Pytest-Cov.
+
+O ambiente Jenkins é preparado por meio do arquivo `Dockerfile.jenkins`.
 
 ## Organização ágil
 
