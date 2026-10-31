@@ -155,5 +155,3 @@ O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em ép
 - **Jira:** https://imersos.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog
 - **Sprint atual:** Sprint 1 – Entrega 5
 - **Objetivo da sprint:** organizar o backlog com as histórias do sistema e concluir cadastro, persistência, busca, empréstimo e menu via terminal.
-
-<!-- Giu: colocar aqui os prints do backlog e do quadro da sprint -->
