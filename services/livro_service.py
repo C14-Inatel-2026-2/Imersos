@@ -2,6 +2,8 @@ from models.livro import Livro
 
 
 class LivroService:
+    CAMPOS_BUSCA = ["titulo", "autor", "genero"]
+
     def __init__(self, repository):
         self.repository = repository
 
@@ -15,6 +17,16 @@ class LivroService:
             "status_leitura": livro.status_leitura,
         }
 
+    def _para_livro(self, dados):
+        return Livro(
+            dados["titulo"],
+            dados["autor"],
+            dados["isbn"],
+            dados["genero"],
+            dados["ano"],
+            dados["status_leitura"],
+        )
+
     def cadastrar_livro(self, titulo, autor, isbn, genero, ano, status_leitura):
         novo_livro = Livro(titulo, autor, isbn, genero, ano, status_leitura)
 
@@ -27,3 +39,20 @@ class LivroService:
         self.repository.salvar(livros)
 
         return novo_livro
+
+    def buscar_livros(self, termo, campo):
+        if campo not in self.CAMPOS_BUSCA:
+            raise ValueError(f"Campo de busca invalido: {campo}")
+
+        if not termo or not termo.strip():
+            raise ValueError("O termo de busca nao pode estar vazio")
+
+        termo = termo.strip().lower()
+        livros = self.repository.carregar()
+
+        return [
+            self._para_livro(item)
+            for item in livros
+            if termo in (item.get(campo) or "").lower()
+        ]
+
