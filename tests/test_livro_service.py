@@ -173,3 +173,198 @@ def test_cadastrar_livro_titulo_invalido_integracao(tmp_path):
         service.cadastrar_livro("", "Autor", "1234567890", "Genero", 2000, "lendo")
 
     assert repo.carregar() == []
+
+# ---------- Busca (SCRUM-9) ----------
+
+@pytest.fixture
+def acervo():
+    return [
+        {
+            "titulo": "1984",
+            "autor": "George Orwell",
+            "isbn": "9780451524935",
+            "genero": "Distopia",
+            "ano": 1949,
+            "status_leitura": "lendo",
+        },
+        {
+            "titulo": "A Revolução dos Bichos",
+            "autor": "George Orwell",
+            "isbn": "9788535909555",
+            "genero": "Fábula",
+            "ano": 1945,
+            "status_leitura": "concluido",
+        },
+        {
+            "titulo": "O Hobbit",
+            "autor": "J. R. R. Tolkien",
+            "isbn": "9788595084742",
+            "genero": "Fantasia",
+            "ano": 1937,
+            "status_leitura": "nao_iniciado",
+        },
+    ]
+
+
+def test_buscar_por_parte_do_titulo(mocker, acervo):
+    repo = mocker.Mock()
+    repo.carregar.return_value = acervo
+    service = LivroService(repo)
+
+    resultado = service.buscar_livros("198", "titulo")
+
+    assert len(resultado) == 1
+    assert resultado[0].titulo == "1984"
+
+
+def test_buscar_por_autor_retorna_todos_correspondentes(mocker, acervo):
+    repo = mocker.Mock()
+    repo.carregar.return_value = acervo
+    service = LivroService(repo)
+
+    resultado = service.buscar_livros("orwell", "autor")
+
+    assert [livro.titulo for livro in resultado] == [
+        "1984",
+        "A Revolução dos Bichos",
+    ]
+
+
+def test_buscar_por_genero(mocker, acervo):
+    repo = mocker.Mock()
+    repo.carregar.return_value = acervo
+    service = LivroService(repo)
+
+    resultado = service.buscar_livros("Fantasia", "genero")
+
+    assert len(resultado) == 1
+    assert resultado[0].titulo == "O Hobbit"
+
+
+def test_buscar_ignora_maiusculas_e_espacos(mocker, acervo):
+    repo = mocker.Mock()
+    repo.carregar.return_value = acervo
+    service = LivroService(repo)
+
+    resultado = service.buscar_livros("  HOBBIT ", "titulo")
+
+    assert len(resultado) == 1
+
+
+def test_buscar_retorna_objetos_livro(mocker, acervo):
+    repo = mocker.Mock()
+    repo.carregar.return_value = acervo
+    service = LivroService(repo)
+
+    resultado = service.buscar_livros("1984", "titulo")
+
+    assert isinstance(resultado[0], Livro)
+
+
+def test_buscar_sem_resultados_retorna_lista_vazia(mocker, acervo):
+    repo = mocker.Mock()
+    repo.carregar.return_value = acervo
+    service = LivroService(repo)
+
+    assert service.buscar_livros("Machado", "autor") == []
+
+
+def test_buscar_em_acervo_vazio(mocker):
+    repo = mocker.Mock()
+    repo.carregar.return_value = []
+    service = LivroService(repo)
+
+    assert service.buscar_livros("1984", "titulo") == []
+
+
+def test_buscar_campo_invalido(mocker):
+    repo = mocker.Mock()
+    service = LivroService(repo)
+
+    with pytest.raises(ValueError, match="Campo"):
+        service.buscar_livros("1984", "isbn")
+
+    repo.carregar.assert_not_called()
+
+
+def test_buscar_termo_vazio(mocker):
+    repo = mocker.Mock()
+    service = LivroService(repo)
+
+    with pytest.raises(ValueError, match="termo"):
+        service.buscar_livros("   ", "titulo")
+
+    repo.carregar.assert_not_called()
+
+
+def test_buscar_nao_altera_o_arquivo(mocker, acervo):
+    repo = mocker.Mock()
+    repo.carregar.return_value = acervo
+    service = LivroService(repo)
+
+    service.buscar_livros("orwell", "autor")
+
+    repo.salvar.assert_not_called()
+
+
+def test_buscar_livros_integracao(tmp_path):
+    arquivo = tmp_path / "livros.json"
+    service = LivroService(LivroRepository(arquivo))
+
+    service.cadastrar_livro(
+        "1984", "George Orwell", "9780451524935", "Distopia", 1949, "lendo"
+    )
+    service.cadastrar_livro(
+        "O Hobbit", "J. R. R. Tolkien", "9788595084742", "Fantasia", 1937,
+        "nao_iniciado"
+    )
+
+    resultado = service.buscar_livros("tolkien", "autor")
+
+    assert len(resultado) == 1
+    assert resultado[0].isbn == "9788595084742"
+
+
+def test_buscar_por_genero_integracao(tmp_path):
+    service = LivroService(LivroRepository(tmp_path / "livros.json"))
+
+    service.cadastrar_livro(
+        "1984", "George Orwell", "9780451524935", "Distopia", 1949, "lendo"
+    )
+    service.cadastrar_livro(
+        "O Hobbit", "J. R. R. Tolkien", "9788595084742", "Fantasia", 1937,
+        "nao_iniciado"
+    )
+
+    resultado = service.buscar_livros("fantasia", "genero")
+
+    assert len(resultado) == 1
+    assert resultado[0].titulo == "O Hobbit"
+
+
+def test_buscar_sem_resultados_integracao(tmp_path):
+    service = LivroService(LivroRepository(tmp_path / "livros.json"))
+
+    service.cadastrar_livro(
+        "1984", "George Orwell", "9780451524935", "Distopia", 1949, "lendo"
+    )
+
+    assert service.buscar_livros("Machado", "autor") == []
+
+
+def test_para_livro_converte_dict():
+    service = LivroService(None)
+    dados = {
+        "titulo": "1984",
+        "autor": "George Orwell",
+        "isbn": "9780451524935",
+        "genero": "Distopia",
+        "ano": 1949,
+        "status_leitura": "lendo",
+    }
+
+    livro = service._para_livro(dados)
+
+    assert isinstance(livro, Livro)
+    assert livro.titulo == "1984"
+    assert livro.isbn == "9780451524935"
