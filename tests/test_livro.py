@@ -43,3 +43,27 @@ def test_status_invalido():
             1949,
             "abandonado"
         )
+
+
+@pytest.mark.parametrize("status", ["nao_iniciado", "lendo", "concluido"])
+def test_status_validos(status):
+    livro = Livro("1984", "George Orwell", "123", "Distopia", 1949, status)
+
+    assert livro.status_leitura == status
+
+
+def test_alterar_status():
+    livro = Livro("1984", "George Orwell", "123", "Distopia", 1949, "nao_iniciado")
+
+    livro.alterar_status("lendo")
+
+    assert livro.status_leitura == "lendo"
+
+
+def test_alterar_status_invalido():
+    livro = Livro("1984", "George Orwell", "123", "Distopia", 1949, "nao_iniciado")
+
+    with pytest.raises(ValueError):
+        livro.alterar_status("abandonado")
+
+    assert livro.status_leitura == "nao_iniciado"
