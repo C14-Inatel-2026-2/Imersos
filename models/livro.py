@@ -23,3 +23,9 @@ class Livro:
         self.genero = genero
         self.ano = ano
         self.status_leitura = status_leitura
+
+    def alterar_status(self, novo_status):
+        if novo_status not in self.STATUS_VALIDOS:
+            raise ValueError("Status de leitura invalido")
+
+        self.status_leitura = novo_status
