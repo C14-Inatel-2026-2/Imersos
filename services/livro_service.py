@@ -56,3 +56,32 @@ class LivroService:
             if termo in (item.get(campo) or "").lower()
         ]
 
+
+    def alterar_status(self, isbn, novo_status):
+        livros = self.repository.carregar()
+
+        for item in livros:
+            if item["isbn"] == isbn:
+                livro = self._para_livro(item)
+                livro.alterar_status(novo_status)
+                item["status_leitura"] = livro.status_leitura
+                self.repository.salvar(livros)
+                return livro
+
+        raise ValueError("Livro nao encontrado")
+
+
+    
+    def filtrar_por_status(self, status):
+        if status not in Livro.STATUS_VALIDOS:
+            raise ValueError("Status de leitura invalido")
+
+        livros = self.repository.carregar()
+
+        return [
+            self._para_livro(item)
+            for item in livros
+            if item["status_leitura"] == status
+        ]
+
+
