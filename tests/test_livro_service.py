@@ -368,3 +368,55 @@ def test_para_livro_converte_dict():
     assert isinstance(livro, Livro)
     assert livro.titulo == "1984"
     assert livro.isbn == "9780451524935"
+
+
+def test_alterar_status_livro(tmp_path):
+    repo = LivroRepository(tmp_path / "livros.json")
+    service = LivroService(repo)
+
+    service.cadastrar_livro("1984", "George Orwell", "123", "Distopia", 1949, "nao_iniciado")
+
+    service.alterar_status("123", "lendo")
+
+    assert repo.carregar()[0]["status_leitura"] == "lendo"
+
+
+def test_alterar_status_invalido(tmp_path):
+    repo = LivroRepository(tmp_path / "livros.json")
+    service = LivroService(repo)
+
+    service.cadastrar_livro("1984", "George Orwell", "123", "Distopia", 1949, "nao_iniciado")
+
+    with pytest.raises(ValueError):
+        service.alterar_status("123", "abandonado")
+
+    assert repo.carregar()[0]["status_leitura"] == "nao_iniciado"
+
+
+def test_alterar_status_livro_inexistente(tmp_path):
+    repo = LivroRepository(tmp_path / "livros.json")
+    service = LivroService(repo)
+
+    with pytest.raises(ValueError):
+        service.alterar_status("123", "lendo")
+
+
+def test_filtrar_por_status(tmp_path):
+    repo = LivroRepository(tmp_path / "livros.json")
+    service = LivroService(repo)
+
+    service.cadastrar_livro("1984", "George Orwell", "123", "Distopia", 1949, "lendo")
+    service.cadastrar_livro("O Hobbit", "Tolkien", "456", "Fantasia", 1937, "concluido")
+
+    resultado = service.filtrar_por_status("lendo")
+
+    assert len(resultado) == 1
+    assert resultado[0].titulo == "1984"
+
+
+def test_filtrar_status_invalido(tmp_path):
+    repo = LivroRepository(tmp_path / "livros.json")
+    service = LivroService(repo)
+
+    with pytest.raises(ValueError):
+        service.filtrar_por_status("abandonado")
