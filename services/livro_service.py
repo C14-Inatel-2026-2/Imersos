@@ -84,4 +84,40 @@ class LivroService:
             if item["status_leitura"] == status
         ]
 
+    def listar_livros(self):
+        return [
+            self._para_livro(item)
+            for item in self.repository.carregar()
+        ]
 
+
+    def editar_livro(self, isbn, dados):
+        livros = self.repository.carregar()
+
+        for i, item in enumerate(livros):
+            if item["isbn"] == isbn:
+                livro = Livro(**dados)
+
+                if livro.isbn != isbn and any(
+                    outro["isbn"] == livro.isbn
+                    for outro in livros
+                ):
+                    raise ValueError("ISBN já cadastrado")
+
+                livros[i] = self._para_dict(livro)
+                self.repository.salvar(livros)
+                return livro
+
+        raise ValueError("Livro não encontrado")
+
+
+    def remover_livro(self, isbn):
+        livros = self.repository.carregar()
+
+        for i, item in enumerate(livros):
+            if item["isbn"] == isbn:
+                livros.pop(i)
+                self.repository.salvar(livros)
+                return
+
+        raise ValueError("Livro não encontrado")
