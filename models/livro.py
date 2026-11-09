@@ -14,8 +14,7 @@ class Livro:
         if ano <= 0:
             raise ValueError("O ano deve ser valido")
 
-        if status_leitura not in self.STATUS_VALIDOS:
-            raise ValueError("Status de leitura invalido")
+        self._validar_status(status_leitura)
 
         self.titulo = titulo
         self.autor = autor
@@ -24,8 +23,10 @@ class Livro:
         self.ano = ano
         self.status_leitura = status_leitura
 
-    def alterar_status(self, novo_status):
-        if novo_status not in self.STATUS_VALIDOS:
+    def _validar_status(self, status):
+        if status not in self.STATUS_VALIDOS:
             raise ValueError("Status de leitura invalido")
 
+    def alterar_status(self, novo_status):
+        self._validar_status(novo_status)
         self.status_leitura = novo_status
