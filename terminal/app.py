@@ -74,4 +74,7 @@ def executar():
             print("Encerrando sistema...")
             break
         else:
-            print("Opção inválida.")
+            print("\nOpção inválida! Escolha uma das opções do menu.")
+
+if __name__ == "__main__":
+    executar()
