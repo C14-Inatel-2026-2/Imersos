@@ -1,6 +1,7 @@
 
-from terminal.app import ler_opcao, ler_dados_livro, mostrar_menu, converter_status
+from terminal.app import ler_opcao, ler_dados_livro, mostrar_menu, converter_status, executar
 import pytest
+from terminal.app import executar
 
 def test_ler_opcao(mocker):
     mocker.patch(
@@ -57,4 +58,60 @@ def test_status_invalido():
     ):
         converter_status("9")
 
+def test_menu_exibe_todas_opcoes(capsys):
+    mostrar_menu()
 
+    saida = capsys.readouterr().out
+
+    opcoes = [
+        "1 - Cadastrar livro",
+        "2 - Buscar livro",
+        "3 - Editar livro",
+        "4 - Remover livro",
+        "5 - Realizar empréstimo",
+        "6 - Realizar devolução",
+        "7 - Listar empréstimos atrasados",
+        "0 - Sair",
+    ]
+
+    for opcao in opcoes:
+        assert opcao in saida
+
+def test_opcao_invalida_retorna_menu(mocker, capsys):
+    mocker.patch(
+        "builtins.input",
+        side_effect=["99", "abc", "0"],
+    )
+
+    executar()
+
+    saida = capsys.readouterr().out
+
+    assert saida.count("Opção inválida!") == 2
+
+    assert saida.count("=== Biblioteca Imersos ===") == 3
+
+    assert "Encerrando sistema..." in saida
+
+def test_menu_completo(capsys):
+    mostrar_menu()
+
+    saida = capsys.readouterr().out
+
+    for opcao in range(9):
+        assert f"{opcao} -" in saida
+
+
+def test_opcao_invalida_retorna_ao_menu(mocker, capsys):
+    mocker.patch(
+        "builtins.input",
+        side_effect=["99", "0"],
+    )
+
+    executar()
+
+    saida = capsys.readouterr().out
+
+    assert "Opção inválida!" in saida
+    assert saida.count("=== Biblioteca Imersos ===") == 2
+    assert "Encerrando sistema..." in saida

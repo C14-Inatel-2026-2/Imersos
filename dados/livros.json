@@ -1,0 +1,26 @@
+[
+    {
+        "titulo": "O vermelho e o negro",
+        "autor": "Sthendal",
+        "isbn": "978-8581864570",
+        "genero": "Romance",
+        "ano": 1830,
+        "status_leitura": "lendo"
+    },
+    {
+        "titulo": "Noites Brancas",
+        "autor": "Fiodor Dostoievski",
+        "isbn": "978-8573263350",
+        "genero": "Novela",
+        "ano": 1848,
+        "status_leitura": "concluido"
+    },
+    {
+        "titulo": "A cartuxa de Parma",
+        "autor": "Sthendal",
+        "isbn": "978-85-63560-38-4",
+        "genero": "Romance",
+        "ano": 1839,
+        "status_leitura": "nao_iniciado"
+    }
+]
