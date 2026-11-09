@@ -155,3 +155,34 @@ O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em ép
 - **Jira:** https://imersos.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog
 - **Sprint atual:** Sprint 1 – Entrega 5
 - **Objetivo da sprint:** organizar o backlog com as histórias do sistema e concluir cadastro, persistência, busca, empréstimo e menu via terminal.
+
+
+## Refactorings
+
+### Modelo Livro — Kauan
+
+#### Refactoring 1 — Extração da validação de status
+
+**Code smell:** Duplicated Code
+
+**Técnica:** Extract Method
+
+**Problema:** A validação do status de leitura estava repetida no construtor `__init__()` e no método `alterar_status()`.
+
+**Solução:** Foi criado o método `_validar_status()`, que centraliza a verificação dos status permitidos e é utilizado pelos dois métodos.
+
+**Justificativa:** Eliminar a duplicação de código, facilitar a manutenção e evitar que a mesma regra precise ser alterada em diferentes lugares.
+
+#### Refactoring 2 — Extração das validações do construtor
+
+**Code smell:** Multiple Responsibilities
+
+**Técnica:** Extract Method
+
+**Problema:** O construtor `__init__()` era responsável por validar os dados recebidos e inicializar os atributos do livro.
+
+**Solução:** Foi criado o método `_validar_dados()`, que reúne as validações de título, autor, ISBN, ano e status de leitura.
+
+**Justificativa:** O Extract Method foi utilizado para separar a responsabilidade de validação da inicialização dos atributos. Isso deixa o construtor mais simples e organizado, facilitando a leitura e manutenção do código sem alterar seu comportamento.
+
+**Pull Request:** [#28 — Refactoring do modelo Livro](https://github.com/C14-Inatel-2026-2/Imersos/pull/28)
