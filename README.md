@@ -186,3 +186,58 @@ O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em ép
 **Justificativa:** O Extract Method foi utilizado para separar a responsabilidade de validação da inicialização dos atributos. Isso deixa o construtor mais simples e organizado, facilitando a leitura e manutenção do código sem alterar seu comportamento.
 
 **Pull Request:** [#28 — Refactoring do modelo Livro](https://github.com/C14-Inatel-2026-2/Imersos/pull/28)
+
+
+## Uso de IA
+
+Durante o desenvolvimento do Imersos, ferramentas de inteligência artificial foram utilizadas como apoio em diferentes etapas do projeto. As sugestões foram analisadas pelos integrantes antes de serem aplicadas, respeitando os requisitos definidos para o trabalho.
+
+### Kauan de Abreu Carvalho — Modelo Livro
+
+**Ferramenta utilizada:** ChatGPT (OpenAI).
+
+**Finalidades:** Auxílio na implementação do modelo Livro, criação de testes, identificação de code smells, refatoração, revisão de Pull Requests, documentação e configuração do Docker.
+
+**Dinâmica de uso:** A IA foi utilizada individualmente para esclarecer dúvidas, revisar implementações e sugerir melhorias. As respostas foram avaliadas e adaptadas conforme as necessidades do projeto.
+
+**Atividades realizadas manualmente:** Execução dos testes, organização dos commits, abertura das Pull Requests, validação das funcionalidades e testes práticos da aplicação no Docker.
+
+### Giuliana Batistella — Services
+
+**Ferramentas utilizadas:** A preencher.
+
+**Finalidades:** A preencher.
+
+**Dinâmica de uso:** A preencher.
+
+**Atividades realizadas manualmente:** A preencher.
+
+### Júlia Seixas Souza — Repository
+
+**Ferramentas utilizadas:** A preencher.
+
+**Finalidades:** A preencher.
+
+**Dinâmica de uso:** A preencher.
+
+**Atividades realizadas manualmente:** A preencher.
+
+### Camile Brunieri Laraia — Empréstimos e CI/CD
+
+**Ferramentas utilizadas:** A preencher.
+
+**Finalidades:** A preencher.
+
+**Dinâmica de uso:** A preencher.
+
+**Atividades realizadas manualmente:** A preencher.
+
+### Luis Otávio Garcia Godoy da Costa — Terminal
+
+**Ferramentas utilizadas:** A preencher.
+
+**Finalidades:** A preencher.
+
+**Dinâmica de uso:** A preencher.
+
+**Atividades realizadas manualmente:** A preencher.
