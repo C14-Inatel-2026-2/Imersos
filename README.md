@@ -214,4 +214,4 @@ O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em ép
 
 **Justificativa:** A centralização da regra reduz duplicação de código, melhora a legibilidade e garante que a mesma regra de negócio seja utilizada tanto no cadastro quanto na edição de livros.
 
-**Pull Request:** adicionar link da PR após sua criação.
+**Pull Request:** [#31 — Refactoring do LivroService](https://github.com/C14-Inatel-2026-2/Imersos/pull/31)
