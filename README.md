@@ -186,3 +186,32 @@ O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em ép
 **Justificativa:** O Extract Method foi utilizado para separar a responsabilidade de validação da inicialização dos atributos. Isso deixa o construtor mais simples e organizado, facilitando a leitura e manutenção do código sem alterar seu comportamento.
 
 **Pull Request:** [#28 — Refactoring do modelo Livro](https://github.com/C14-Inatel-2026-2/Imersos/pull/28)
+
+
+### Livro Service — Júlia
+
+#### Refactoring 1 — Extração da busca de livro por ISBN
+
+**Code smell:** Duplicated Code
+
+**Técnica:** Extract Method
+
+**Problema:** A lógica responsável por localizar um livro pelo ISBN estava repetida nos métodos `alterar_status()`, `editar_livro()` e `remover_livro()`.
+
+**Solução:** Foi criado o método auxiliar `_buscar_indice_por_isbn()`, responsável por localizar o índice de um livro a partir do ISBN informado.
+
+**Justificativa:** Centralizar a busca por ISBN elimina código duplicado, facilita a manutenção e evita que alterações na lógica de localização precisem ser realizadas em vários métodos.
+
+#### Refactoring 2 — Extração da validação de ISBN duplicado
+
+**Code smell:** Duplicated Code
+
+**Técnica:** Extract Method
+
+**Problema:** A verificação de ISBN duplicado era realizada separadamente nos métodos `cadastrar_livro()` e `editar_livro()`.
+
+**Solução:** Foi criado o método auxiliar `_validar_isbn_unico()`, que centraliza a regra de validação da unicidade do ISBN.
+
+**Justificativa:** A centralização da regra reduz duplicação de código, melhora a legibilidade e garante que a mesma regra de negócio seja utilizada tanto no cadastro quanto na edição de livros.
+
+**Pull Request:** adicionar link da PR após sua criação.
