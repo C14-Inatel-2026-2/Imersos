@@ -27,13 +27,37 @@ class LivroService:
             dados["status_leitura"],
         )
 
-    def cadastrar_livro(self, titulo, autor, isbn, genero, ano, status_leitura):
-        novo_livro = Livro(titulo, autor, isbn, genero, ano, status_leitura)
+    def _buscar_indice_por_isbn(self, livros, isbn):
+        for i, item in enumerate(livros):
+            if item["isbn"] == isbn:
+                return i
+
+        return None
+
+    def cadastrar_livro(
+        self,
+        titulo,
+        autor,
+        isbn,
+        genero,
+        ano,
+        status_leitura
+    ):
+        novo_livro = Livro(
+            titulo,
+            autor,
+            isbn,
+            genero,
+            ano,
+            status_leitura
+        )
 
         livros = self.repository.carregar()
 
         if any(item["isbn"] == isbn for item in livros):
-            raise ValueError(f"Ja existe um livro cadastrado com o ISBN {isbn}")
+            raise ValueError(
+                f"Ja existe um livro cadastrado com o ISBN {isbn}"
+            )
 
         livros.append(self._para_dict(novo_livro))
         self.repository.salvar(livros)
@@ -42,10 +66,14 @@ class LivroService:
 
     def buscar_livros(self, termo, campo):
         if campo not in self.CAMPOS_BUSCA:
-            raise ValueError(f"Campo de busca invalido: {campo}")
+            raise ValueError(
+                f"Campo de busca invalido: {campo}"
+            )
 
         if not termo or not termo.strip():
-            raise ValueError("O termo de busca nao pode estar vazio")
+            raise ValueError(
+                "O termo de busca nao pode estar vazio"
+            )
 
         termo = termo.strip().lower()
         livros = self.repository.carregar()
@@ -56,25 +84,30 @@ class LivroService:
             if termo in (item.get(campo) or "").lower()
         ]
 
-
     def alterar_status(self, isbn, novo_status):
         livros = self.repository.carregar()
 
-        for item in livros:
-            if item["isbn"] == isbn:
-                livro = self._para_livro(item)
-                livro.alterar_status(novo_status)
-                item["status_leitura"] = livro.status_leitura
-                self.repository.salvar(livros)
-                return livro
+        indice = self._buscar_indice_por_isbn(
+            livros,
+            isbn
+        )
 
-        raise ValueError("Livro nao encontrado")
+        if indice is None:
+            raise ValueError("Livro nao encontrado")
 
+        livro = self._para_livro(livros[indice])
+        livro.alterar_status(novo_status)
 
-    
+        livros[indice]["status_leitura"] = livro.status_leitura
+        self.repository.salvar(livros)
+
+        return livro
+
     def filtrar_por_status(self, status):
         if status not in Livro.STATUS_VALIDOS:
-            raise ValueError("Status de leitura invalido")
+            raise ValueError(
+                "Status de leitura invalido"
+            )
 
         livros = self.repository.carregar()
 
@@ -90,34 +123,40 @@ class LivroService:
             for item in self.repository.carregar()
         ]
 
-
     def editar_livro(self, isbn, dados):
         livros = self.repository.carregar()
 
-        for i, item in enumerate(livros):
-            if item["isbn"] == isbn:
-                livro = Livro(**dados)
+        indice = self._buscar_indice_por_isbn(
+            livros,
+            isbn
+        )
 
-                if livro.isbn != isbn and any(
-                    outro["isbn"] == livro.isbn
-                    for outro in livros
-                ):
-                    raise ValueError("ISBN já cadastrado")
+        if indice is None:
+            raise ValueError("Livro não encontrado")
 
-                livros[i] = self._para_dict(livro)
-                self.repository.salvar(livros)
-                return livro
+        livro = Livro(**dados)
 
-        raise ValueError("Livro não encontrado")
+        if livro.isbn != isbn and any(
+            outro["isbn"] == livro.isbn
+            for outro in livros
+        ):
+            raise ValueError("ISBN já cadastrado")
 
+        livros[indice] = self._para_dict(livro)
+        self.repository.salvar(livros)
+
+        return livro
 
     def remover_livro(self, isbn):
         livros = self.repository.carregar()
 
-        for i, item in enumerate(livros):
-            if item["isbn"] == isbn:
-                livros.pop(i)
-                self.repository.salvar(livros)
-                return
+        indice = self._buscar_indice_por_isbn(
+            livros,
+            isbn
+        )
 
-        raise ValueError("Livro não encontrado")
+        if indice is None:
+            raise ValueError("Livro não encontrado")
+
+        livros.pop(indice)
+        self.repository.salvar(livros)
