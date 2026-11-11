@@ -420,3 +420,96 @@ def test_filtrar_status_invalido(tmp_path):
 
     with pytest.raises(ValueError):
         service.filtrar_por_status("abandonado")
+
+# ---------- Edição e remoção ----------
+
+def test_editar_livro(tmp_path):
+    repo = LivroRepository(tmp_path / "livros.json")
+    service = LivroService(repo)
+
+    service.cadastrar_livro(
+        "1984",
+        "George Orwell",
+        "123",
+        "Distopia",
+        1949,
+        "nao_iniciado"
+    )
+
+    dados_atualizados = {
+        "titulo": "1984 - Edição Atualizada",
+        "autor": "George Orwell",
+        "isbn": "123",
+        "genero": "Distopia",
+        "ano": 1949,
+        "status_leitura": "lendo",
+    }
+
+    livro = service.editar_livro("123", dados_atualizados)
+
+    assert livro.titulo == "1984 - Edição Atualizada"
+    assert livro.status_leitura == "lendo"
+    assert repo.carregar()[0]["titulo"] == "1984 - Edição Atualizada"
+
+
+def test_editar_livro_isbn_duplicado(tmp_path):
+    repo = LivroRepository(tmp_path / "livros.json")
+    service = LivroService(repo)
+
+    service.cadastrar_livro(
+        "1984", "George Orwell", "123", "Distopia", 1949, "nao_iniciado"
+    )
+
+    service.cadastrar_livro(
+        "O Hobbit", "Tolkien", "456", "Fantasia", 1937, "concluido"
+    )
+
+    dados_atualizados = {
+        "titulo": "1984",
+        "autor": "George Orwell",
+        "isbn": "456",
+        "genero": "Distopia",
+        "ano": 1949,
+        "status_leitura": "lendo",
+    }
+
+    with pytest.raises(ValueError, match="ISBN já cadastrado"):
+        service.editar_livro("123", dados_atualizados)
+
+
+def test_editar_livro_inexistente(tmp_path):
+    repo = LivroRepository(tmp_path / "livros.json")
+    service = LivroService(repo)
+
+    dados = {
+        "titulo": "1984",
+        "autor": "George Orwell",
+        "isbn": "123",
+        "genero": "Distopia",
+        "ano": 1949,
+        "status_leitura": "lendo",
+    }
+
+    with pytest.raises(ValueError, match="Livro não encontrado"):
+        service.editar_livro("999", dados)
+
+
+def test_remover_livro(tmp_path):
+    repo = LivroRepository(tmp_path / "livros.json")
+    service = LivroService(repo)
+
+    service.cadastrar_livro(
+        "1984", "George Orwell", "123", "Distopia", 1949, "nao_iniciado"
+    )
+
+    service.remover_livro("123")
+
+    assert repo.carregar() == []
+
+
+def test_remover_livro_inexistente(tmp_path):
+    repo = LivroRepository(tmp_path / "livros.json")
+    service = LivroService(repo)
+
+    with pytest.raises(ValueError, match="Livro não encontrado"):
+        service.remover_livro("999")
