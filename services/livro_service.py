@@ -54,10 +54,11 @@ class LivroService:
 
         livros = self.repository.carregar()
 
-        if any(item["isbn"] == isbn for item in livros):
-            raise ValueError(
-                f"Ja existe um livro cadastrado com o ISBN {isbn}"
-            )
+        self._validar_isbn_unico(
+            livros,
+            isbn,
+            mensagem=f"Ja existe um livro cadastrado com o ISBN {isbn}"
+        )
 
         livros.append(self._para_dict(novo_livro))
         self.repository.salvar(livros)
@@ -136,11 +137,12 @@ class LivroService:
 
         livro = Livro(**dados)
 
-        if livro.isbn != isbn and any(
-            outro["isbn"] == livro.isbn
-            for outro in livros
-        ):
-            raise ValueError("ISBN já cadastrado")
+        if livro.isbn != isbn:
+            self._validar_isbn_unico(
+                livros,
+                livro.isbn,
+                indice_ignorado=indice
+            )
 
         livros[indice] = self._para_dict(livro)
         self.repository.salvar(livros)
@@ -160,3 +162,15 @@ class LivroService:
 
         livros.pop(indice)
         self.repository.salvar(livros)
+
+
+    def _validar_isbn_unico(
+        self,
+        livros,
+        isbn,
+        indice_ignorado=None,
+        mensagem="ISBN já cadastrado"
+    ):
+        for i, item in enumerate(livros):
+            if i != indice_ignorado and item["isbn"] == isbn:
+                raise ValueError(mensagem)
