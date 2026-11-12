@@ -34,6 +34,14 @@ class LivroService:
 
         return None
 
+    def _obter_indice_existente(self, livros, isbn):
+        indice = self._buscar_indice_por_isbn(livros, isbn)
+
+        if indice is None:
+            raise ValueError("Livro não encontrado")
+
+        return indice
+
     def cadastrar_livro(
         self,
         titulo,
@@ -88,13 +96,7 @@ class LivroService:
     def alterar_status(self, isbn, novo_status):
         livros = self.repository.carregar()
 
-        indice = self._buscar_indice_por_isbn(
-            livros,
-            isbn
-        )
-
-        if indice is None:
-            raise ValueError("Livro nao encontrado")
+        indice = self._obter_indice_existente(livros, isbn)
 
         livro = self._para_livro(livros[indice])
         livro.alterar_status(novo_status)
@@ -127,13 +129,7 @@ class LivroService:
     def editar_livro(self, isbn, dados):
         livros = self.repository.carregar()
 
-        indice = self._buscar_indice_por_isbn(
-            livros,
-            isbn
-        )
-
-        if indice is None:
-            raise ValueError("Livro não encontrado")
+        indice = self._obter_indice_existente(livros, isbn)
 
         livro = Livro(**dados)
 
@@ -152,13 +148,7 @@ class LivroService:
     def remover_livro(self, isbn):
         livros = self.repository.carregar()
 
-        indice = self._buscar_indice_por_isbn(
-            livros,
-            isbn
-        )
-
-        if indice is None:
-            raise ValueError("Livro não encontrado")
+        indice = self._obter_indice_existente(livros, isbn)
 
         livros.pop(indice)
         self.repository.salvar(livros)

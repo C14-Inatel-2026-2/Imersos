@@ -513,3 +513,11 @@ def test_remover_livro_inexistente(tmp_path):
 
     with pytest.raises(ValueError, match="Livro não encontrado"):
         service.remover_livro("999")
+
+
+def test_alterar_status_livro_inexistente_mensagem_padronizada(tmp_path):
+    repo = LivroRepository(tmp_path / "livros.json")
+    service = LivroService(repo)
+
+    with pytest.raises(ValueError, match="Livro não encontrado"):
+        service.alterar_status("123", "lendo")
