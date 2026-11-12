@@ -281,7 +281,7 @@ O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em ép
 
 **Justificativa:** Elimina a duplicação, deixa explícito o que diferencia cada consulta e concentra em um só ponto a conversão dos dados do repositório em objetos `Livro`.
 
-**Pull Request:** [#33 — Refactoring do LivroService (Giuliana)](https://github.com/C14-Inatel-2026-2/Imersos/pull/33)
+**Pull Request:** [#34 — Refactoring do LivroService (Giuliana)](https://github.com/C14-Inatel-2026-2/Imersos/pull/34)
 
 ## Uso de IA
 
