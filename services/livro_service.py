@@ -34,6 +34,21 @@ class LivroService:
 
         return None
 
+    def _obter_indice_existente(self, livros, isbn):
+        indice = self._buscar_indice_por_isbn(livros, isbn)
+
+        if indice is None:
+            raise ValueError("Livro não encontrado")
+
+        return indice
+
+    def _filtrar_livros(self, condicao=None):
+        return [
+            self._para_livro(item)
+            for item in self.repository.carregar()
+            if condicao is None or condicao(item)
+        ]
+
     def cadastrar_livro(
         self,
         titulo,
@@ -77,24 +92,15 @@ class LivroService:
             )
 
         termo = termo.strip().lower()
-        livros = self.repository.carregar()
 
-        return [
-            self._para_livro(item)
-            for item in livros
-            if termo in (item.get(campo) or "").lower()
-        ]
+        return self._filtrar_livros(
+            lambda item: termo in (item.get(campo) or "").lower()
+        )
 
     def alterar_status(self, isbn, novo_status):
         livros = self.repository.carregar()
 
-        indice = self._buscar_indice_por_isbn(
-            livros,
-            isbn
-        )
-
-        if indice is None:
-            raise ValueError("Livro nao encontrado")
+        indice = self._obter_indice_existente(livros, isbn)
 
         livro = self._para_livro(livros[indice])
         livro.alterar_status(novo_status)
@@ -110,30 +116,17 @@ class LivroService:
                 "Status de leitura invalido"
             )
 
-        livros = self.repository.carregar()
-
-        return [
-            self._para_livro(item)
-            for item in livros
-            if item["status_leitura"] == status
-        ]
+        return self._filtrar_livros(
+            lambda item: item["status_leitura"] == status
+        )
 
     def listar_livros(self):
-        return [
-            self._para_livro(item)
-            for item in self.repository.carregar()
-        ]
+        return self._filtrar_livros()
 
     def editar_livro(self, isbn, dados):
         livros = self.repository.carregar()
 
-        indice = self._buscar_indice_por_isbn(
-            livros,
-            isbn
-        )
-
-        if indice is None:
-            raise ValueError("Livro não encontrado")
+        indice = self._obter_indice_existente(livros, isbn)
 
         livro = Livro(**dados)
 
@@ -152,13 +145,7 @@ class LivroService:
     def remover_livro(self, isbn):
         livros = self.repository.carregar()
 
-        indice = self._buscar_indice_por_isbn(
-            livros,
-            isbn
-        )
-
-        if indice is None:
-            raise ValueError("Livro não encontrado")
+        indice = self._obter_indice_existente(livros, isbn)
 
         livros.pop(indice)
         self.repository.salvar(livros)
