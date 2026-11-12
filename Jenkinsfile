@@ -1,7 +1,8 @@
 
 pipeline {
-    agent any
-
+    agent {
+        label 'built-in'
+    }
     stages {
         stage('Build') {
             steps {
@@ -135,6 +136,78 @@ pipeline {
 
                     archiveArtifacts artifacts: 'reports/**/*',
                                     allowEmptyArchive: true
+                }
+            }
+        }
+
+
+        stage('Deploy - Docker Hub') {
+            when {
+                beforeAgent true
+                expression {
+                    env.GIT_BRANCH == 'origin/main' ||
+                    env.GIT_BRANCH == 'main' ||
+                    env.BRANCH_NAME == 'main'
+                }
+            }
+
+            agent {
+                label 'windows-docker'
+            }
+
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKERHUB_USER',
+                        passwordVariable: 'DOCKERHUB_TOKEN'
+                    )
+                ]) {
+                    powershell '''
+                        $ErrorActionPreference = "Stop"
+
+                        $usuario = $env:DOCKERHUB_USER.ToLowerInvariant()
+                        $imagem = "$usuario/imersos"
+                        $versao = "{0}:{1}" -f $imagem, $env:BUILD_NUMBER
+                        $latest = "$imagem`:latest"
+
+                        Write-Host "Construindo imagem Docker..."
+
+                        docker build -t $versao -t $latest .
+                        if ($LASTEXITCODE -ne 0) {
+                            throw "Falha ao construir a imagem"
+                        }
+
+                        Write-Host "Autenticando no Docker Hub..."
+
+                        $env:DOCKERHUB_TOKEN |
+                            docker login --username $usuario --password-stdin
+
+                        if ($LASTEXITCODE -ne 0) {
+                            throw "Falha na autenticacao"
+                        }
+
+                        try {
+                            Write-Host "Publicando versao $versao"
+
+                            docker push $versao
+                            if ($LASTEXITCODE -ne 0) {
+                                throw "Falha ao publicar a versao"
+                            }
+
+                            Write-Host "Publicando tag latest..."
+
+                            docker push $latest
+                            if ($LASTEXITCODE -ne 0) {
+                                throw "Falha ao publicar latest"
+                            }
+
+                            Write-Host "Imagem publicada com sucesso!"
+                        }
+                        finally {
+                            docker logout | Out-Null
+                        }
+                    '''
                 }
             }
         }
