@@ -1,3 +1,4 @@
+
 # 📚 Imersos — Biblioteca Pessoal
 
 ## Descrição
@@ -9,21 +10,33 @@ O sistema não tem interface gráfica nem banco de dados: a interação é feita
 ### Estrutura do projeto
 
 | Pasta | Responsabilidade |
+
 |---|---|
+
 | `models/` | Classes de domínio (`Livro`, `Emprestimo`) e suas validações |
+
 | `repository/` | Persistência dos dados em arquivo JSON |
+
 | `services/` | Regras de negócio (cadastro, busca, empréstimo) |
+
 | `terminal/` | Menu e interação com o usuário |
+
 | `tests/` | Testes automatizados com Pytest |
 
 ### Integrantes
 
 | Integrante | Responsabilidade |
+
 |---|---|
+
 | Giuliana Batistella | `services/` |
+
 | Júlia Seixas Souza | `repository/` |
+
 | Camile Brunieri Laraia | CI/CD (Jenkins) e `models/emprestimo.py` |
+
 | Kauan de Abreu Carvalho | `models/livro.py` |
+
 | Luis Otávio Garcia Godoy da Costa | `terminal/` |
 
 ## Requisitos funcionais
@@ -73,12 +86,19 @@ O sistema não tem interface gráfica nem banco de dados: a interação é feita
 As histórias estão cadastradas no Jira, com critérios de aceitação no formato *Given / When / Then*.
 
 | # | História | Responsável | Épico | Status | Card |
+
 |---|---|---|---|---|---|
+
 | 1 | Cadastrar livro no acervo | Kauan | Livros | A fazer | [SCRUM-12](https://imersos.atlassian.net/browse/SCRUM-12) |
+
 | 2 | Persistência dos dados | Juh | Persistência | A fazer | [SCRUM-15](https://imersos.atlassian.net/browse/SCRUM-15) |
+
 | 3 | Buscar livros por título, autor ou gênero | Giu | Livros | A fazer | [SCRUM-9](https://imersos.atlassian.net/browse/SCRUM-9) |
+
 | 4 | Interface via Terminal | Labubu | Interface | A fazer | [SCRUM-14](https://imersos.atlassian.net/browse/SCRUM-14) |
+
 | 5 | Controlar status de leitura dos livros | Kauan | Livros | A fazer | [SCRUM-13](https://imersos.atlassian.net/browse/SCRUM-13) |
+
 | 6 | Registrar empréstimo de livro | Mile | Empréstimos | A fazer | [SCRUM-10](https://imersos.atlassian.net/browse/SCRUM-10) |
 
 O backlog também possui histórias planejadas para as próximas sprints, incluindo listar, editar e remover livros, filtrar por status, registrar devoluções e listar empréstimos atrasados.
@@ -88,20 +108,27 @@ O backlog também possui histórias planejadas para as próximas sprints, inclui
 ### Pré-requisitos
 
 - Python 3.13 ou superior
+
 - Poetry
+
 - Git
 
 ### Clonar o repositório
 
 ```bash
+
 git clone https://github.com/C14-Inatel-2026-2/Imersos.git
+
 cd Imersos
+
 ```
 
 ### Instalar as dependências
 
 ```bash
+
 poetry install --no-root
+
 ```
 
 ### Executar a aplicação
@@ -113,19 +140,25 @@ A interface principal está localizada em `terminal/app.py`. A execução intera
 Para executar todos os testes automatizados:
 
 ```bash
+
 poetry run python -m pytest tests/ -v
+
 ```
 
 Para executar somente os testes do modelo Livro:
 
 ```bash
+
 poetry run python -m pytest tests/test_livro.py -v
+
 ```
 
 ### Executar testes com cobertura
 
 ```bash
+
 poetry run python -m pytest tests/ --cov=models --cov=repository --cov=services --cov=terminal --cov-report=term-missing
+
 ```
 
 ## Integração contínua — CI/CD
@@ -137,11 +170,17 @@ O arquivo `Jenkinsfile` define os estágios responsáveis por verificar o códig
 ### Estágios do pipeline
 
 1. **Build:** verifica o ambiente, instala as dependências e compila os arquivos Python.
+
 2. **Testes - Emprestimo:** executa os testes do modelo de empréstimos.
+
 3. **Testes - Services:** executa os testes dos serviços.
+
 4. **Testes - Livro:** executa os testes do modelo Livro.
+
 5. **Testes - Terminal:** executa os testes da interface de terminal.
+
 6. **Testes - Repository:** executa os testes da camada de persistência.
+
 7. **Relatório de Cobertura:** executa os testes e gera relatórios de cobertura.
 
 Os resultados dos testes são publicados no Jenkins utilizando relatórios JUnit, enquanto a cobertura é gerada com Pytest-Cov.
@@ -153,9 +192,10 @@ O ambiente Jenkins é preparado por meio do arquivo `Dockerfile.jenkins`.
 O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em épicos por módulo: *Livros*, *Empréstimos*, *Persistência* e *Interface*. Cada integrante cadastrou ao menos uma história de usuário com critérios de aceitação no formato *Given / When / Then*.
 
 - **Jira:** https://imersos.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog
-- **Sprint atual:** Sprint 1 – Entrega 5
-- **Objetivo da sprint:** organizar o backlog com as histórias do sistema e concluir cadastro, persistência, busca, empréstimo e menu via terminal.
 
+- **Sprint atual:** Sprint 1 – Entrega 5
+
+- **Objetivo da sprint:** organizar o backlog com as histórias do sistema e concluir cadastro, persistência, busca, empréstimo e menu via terminal.
 
 ## Refactorings
 
@@ -187,6 +227,33 @@ O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em ép
 
 **Pull Request:** [#28 — Refactoring do modelo Livro](https://github.com/C14-Inatel-2026-2/Imersos/pull/28)
 
+### Livro Service — Júlia
+
+#### Refactoring 1 — Extração da busca de livro por ISBN
+
+**Code smell:** Duplicated Code
+
+**Técnica:** Extract Method
+
+**Problema:** A lógica responsável por localizar um livro pelo ISBN estava repetida nos métodos `alterar_status()`, `editar_livro()` e `remover_livro()`.
+
+**Solução:** Foi criado o método auxiliar `_buscar_indice_por_isbn()`, responsável por localizar o índice de um livro a partir do ISBN informado.
+
+**Justificativa:** Centralizar a busca por ISBN elimina código duplicado, facilita a manutenção e evita que alterações na lógica de localização precisem ser realizadas em vários métodos.
+
+#### Refactoring 2 — Extração da validação de ISBN duplicado
+
+**Code smell:** Duplicated Code
+
+**Técnica:** Extract Method
+
+**Problema:** A verificação de ISBN duplicado era realizada separadamente nos métodos `cadastrar_livro()` e `editar_livro()`.
+
+**Solução:** Foi criado o método auxiliar `_validar_isbn_unico()`, que centraliza a regra de validação da unicidade do ISBN.
+
+**Justificativa:** A centralização da regra reduz duplicação de código, melhora a legibilidade e garante que a mesma regra de negócio seja utilizada tanto no cadastro quanto na edição de livros.
+
+**Pull Request:** [#31 — Refactoring do LivroService](https://github.com/C14-Inatel-2026-2/Imersos/pull/31)
 
 ## Uso de IA
 
