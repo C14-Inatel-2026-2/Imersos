@@ -180,8 +180,16 @@ pipeline {
 
                         Write-Host "Autenticando no Docker Hub..."
 
-                        $env:DOCKERHUB_TOKEN |
-                            docker login --username $usuario --password-stdin
+                        
+                        $utf8SemBom = New-Object System.Text.UTF8Encoding($false)
+                        [Console]::InputEncoding = $utf8SemBom
+                        $OutputEncoding = $utf8SemBom
+
+                        $usuario = $env:DOCKERHUB_USER.Trim().ToLowerInvariant()
+                        $token = $env:DOCKERHUB_TOKEN.Trim()
+
+                        $token | docker login --username $usuario --password-stdin
+
 
                         if ($LASTEXITCODE -ne 0) {
                             throw "Falha na autenticacao"
