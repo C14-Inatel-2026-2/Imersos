@@ -1,0 +1,15 @@
+
+.git
+.github
+.venv
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+reports/
+tests/
+dist/
+dados/
+.env
+*.log
+Dockerfile.jenkins
