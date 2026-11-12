@@ -255,6 +255,34 @@ O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em ép
 
 **Pull Request:** [#31 — Refactoring do LivroService](https://github.com/C14-Inatel-2026-2/Imersos/pull/31)
 
+### Livro Service — Giuliana
+
+#### Refactoring 1 — Extração da verificação de livro existente
+
+**Code smell:** Duplicated Code
+
+**Técnica:** Extract Method
+
+**Problema:** Os métodos `alterar_status()`, `editar_livro()` e `remover_livro()` repetiam o bloco que verifica se o livro foi encontrado e lança o erro caso não exista. Além disso, a mensagem estava inconsistente: `"Livro nao encontrado"` em um método e `"Livro não encontrado"` nos outros.
+
+**Solução:** Foi criado o método auxiliar `_obter_indice_existente()`, que busca o índice pelo ISBN e lança `ValueError("Livro não encontrado")` quando o livro não existe. Os três métodos passaram a utilizá-lo. Também foi adicionado um teste garantindo a mensagem padronizada.
+
+**Justificativa:** A regra de que o livro precisa existir fica centralizada em um único lugar, os métodos ficam mais curtos e a mensagem de erro passa a ser a mesma em todas as operações.
+
+#### Refactoring 2 — Extração da filtragem de livros
+
+**Code smell:** Duplicated Code
+
+**Técnica:** Extract Method
+
+**Problema:** Os métodos `buscar_livros()`, `filtrar_por_status()` e `listar_livros()` repetiam a mesma estrutura: carregar os dados do repositório, percorrer a lista e converter cada item em `Livro`, mudando apenas a condição de filtro.
+
+**Solução:** Foi criado o método auxiliar `_filtrar_livros()`, que recebe uma condição opcional e retorna os livros que a satisfazem. Cada método passou a informar apenas a sua condição.
+
+**Justificativa:** Elimina a duplicação, deixa explícito o que diferencia cada consulta e concentra em um só ponto a conversão dos dados do repositório em objetos `Livro`.
+
+**Pull Request:** [#33 — Refactoring do LivroService (Giuliana)](https://github.com/C14-Inatel-2026-2/Imersos/pull/33)
+
 ## Uso de IA
 
 Durante o desenvolvimento do Imersos, ferramentas de inteligência artificial foram utilizadas como apoio em diferentes etapas do projeto. As sugestões foram analisadas pelos integrantes antes de serem aplicadas, respeitando os requisitos definidos para o trabalho.
