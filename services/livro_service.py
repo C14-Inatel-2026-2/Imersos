@@ -42,6 +42,13 @@ class LivroService:
 
         return indice
 
+    def _filtrar_livros(self, condicao=None):
+        return [
+            self._para_livro(item)
+            for item in self.repository.carregar()
+            if condicao is None or condicao(item)
+        ]
+
     def cadastrar_livro(
         self,
         titulo,
@@ -85,13 +92,10 @@ class LivroService:
             )
 
         termo = termo.strip().lower()
-        livros = self.repository.carregar()
 
-        return [
-            self._para_livro(item)
-            for item in livros
-            if termo in (item.get(campo) or "").lower()
-        ]
+        return self._filtrar_livros(
+            lambda item: termo in (item.get(campo) or "").lower()
+        )
 
     def alterar_status(self, isbn, novo_status):
         livros = self.repository.carregar()
@@ -112,19 +116,12 @@ class LivroService:
                 "Status de leitura invalido"
             )
 
-        livros = self.repository.carregar()
-
-        return [
-            self._para_livro(item)
-            for item in livros
-            if item["status_leitura"] == status
-        ]
+        return self._filtrar_livros(
+            lambda item: item["status_leitura"] == status
+        )
 
     def listar_livros(self):
-        return [
-            self._para_livro(item)
-            for item in self.repository.carregar()
-        ]
+        return self._filtrar_livros()
 
     def editar_livro(self, isbn, dados):
         livros = self.repository.carregar()
