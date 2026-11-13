@@ -3,11 +3,6 @@ from datetime import date
 
 from terminal.app import (
     realizar_emprestimo,
-    listar_emprestimos_atrasados,
-)
-
-from terminal.app import (
-    realizar_emprestimo,
     realizar_devolucao,
     listar_emprestimos_atrasados,
 )

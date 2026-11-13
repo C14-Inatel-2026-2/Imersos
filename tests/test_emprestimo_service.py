@@ -200,3 +200,22 @@ def test_permite_emprestar_novamente_apos_devolucao(service):
     assert novo_emprestimo["isbn"] == "123"
     assert novo_emprestimo["emprestado_para"] == "Bia"
     assert service.consultar_emprestimo("123") == novo_emprestimo
+
+def test_permite_remover_livro_apos_devolucao(service):
+    service.realizar_emprestimo(
+        "123",
+        "Ana",
+        date(2026, 11, 20),
+        date(2026, 11, 13)
+    )
+
+    service.realizar_devolucao("123")
+
+    livro_service = LivroService(
+        service.livro_repository,
+        service.emprestimo_repository
+    )
+
+    livro_service.remover_livro("123")
+
+    assert service.livro_repository.carregar() == []    
