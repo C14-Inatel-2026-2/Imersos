@@ -25,6 +25,12 @@ def mostrar_menu():
 def ler_opcao():
     return input("Escolha uma opção: ")
 
+def confirmar_operacao(operacao):
+    resposta = input(
+        f"\nConfirmar {operacao}? (s/n): "
+    ).strip().lower()
+
+    return resposta == "s"
 
 def converter_status(opcao_status):
     status = {
@@ -180,11 +186,7 @@ def realizar_emprestimo(service):
     print(f"Emprestado para: {pessoa}")
     print(f"Devolução prevista: {data_prevista:%d-%m-%Y}")
 
-    confirmacao = input(
-        "\nConfirmar empréstimo? (s/n): "
-    ).strip().lower()
-
-    if confirmacao != "s":
+    if not confirmar_operacao("empréstimo"):
         print("Empréstimo cancelado.")
         return
 
@@ -238,18 +240,13 @@ def realizar_devolucao(service):
     )
     print(f"Devolução prevista: {data_prevista}")
 
-    confirmacao = input(
-        "\nConfirmar devolução? (s/n): "
-    ).strip().lower()
-
-    if confirmacao != "s":
+    if not confirmar_operacao("devolução"):
         print("Devolução cancelada.")
         return
 
     service.realizar_devolucao(isbn)
 
     print("Devolução registrada com sucesso!")
-
 
 def executar():
     pasta_dados = Path(__file__).resolve().parents[1] / "dados"

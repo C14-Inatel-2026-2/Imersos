@@ -36,12 +36,15 @@ def test_menu_listar_atrasados(mocker, capsys):
     service.listar_atrasados.return_value = [{
         "isbn": "123",
         "emprestado_para": "Ana",
-        "data_devolucao_prevista": "20-11-2026",
+        "data_devolucao_prevista": "2026-11-20",
     }]
 
     listar_emprestimos_atrasados(service)
 
-    assert "123" in capsys.readouterr().out
+    saida = capsys.readouterr().out
+
+    assert "123" in saida
+    assert "20-11-2026" in saida
 
 def test_menu_realizar_devolucao(mocker, capsys):
     service = mocker.Mock()
