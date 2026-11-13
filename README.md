@@ -336,3 +336,44 @@ Durante o desenvolvimento do Imersos, ferramentas de inteligência artificial fo
 **Dinâmica de uso:** A preencher.
 
 **Atividades realizadas manualmente:** A preencher.
+
+### Deploy automatizado — Render
+
+O projeto Imersos possui um pipeline CI/CD implementado no Jenkins, responsável pela execução automatizada do build, testes, análise de cobertura e deploy da aplicação.
+
+A implantação é realizada em um serviço externo ao ambiente Jenkins, utilizando o Render.
+
+**Aplicação hospedada no Render:**
+
+https://imersos-c14.onrender.com/health
+
+**Imagem publicada no Docker Hub:**
+
+https://hub.docker.com/r/milelaraia/imersos
+
+#### Fluxo de implantação
+
+1. O código é integrado à branch `main` no GitHub.
+2. O Jenkins executa o build e os testes automatizados.
+3. São gerados os relatórios de cobertura.
+4. O Jenkins constrói e publica a imagem no Docker Hub.
+5. Após a publicação, o Jenkins solicita automaticamente uma nova implantação no Render por meio de um Deploy Hook.
+6. O Render executa a imagem Docker em seu ambiente de hospedagem.
+
+#### Evidências de execução
+
+Na execução **#22** do pipeline `Imersos-CI-CD`, foram obtidos os seguintes resultados:
+
+- **69 testes automatizados aprovados.**
+- **81% de cobertura de código.**
+- Publicação da imagem `milelaraia/imersos:22`.
+- Atualização da tag `milelaraia/imersos:latest`.
+- Solicitação de deploy aceita pelo Render.
+- Pipeline finalizado com `SUCCESS`.
+
+**Pull Requests relacionados:**
+
+- [PR #35 — Endpoint HTTP para o Render](https://github.com/C14-Inatel-2026-2/Imersos/pull/35)
+- [PR #36 — Deploy automatizado no Render](https://github.com/C14-Inatel-2026-2/Imersos/pull/36)
+
+O endpoint `/health` permite verificar publicamente se o serviço HTTP está respondendo no ambiente externo.
