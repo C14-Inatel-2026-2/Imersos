@@ -26,6 +26,9 @@
         method="GET"
         class="search-form"
     >
+        {% if status %}
+            <input type="hidden" name="status" value="{{ status }}">
+        {% endif %}
 
         <select
             name="campo"
@@ -68,6 +71,46 @@
            class="btn btn-secondary">
             Limpar
         </a>
+
+    </form>
+
+    <form
+        action="{{ url_for('listar_livros') }}"
+        method="GET"
+        class="search-form"
+    >
+
+        {% if termo %}
+            <input type="hidden" name="termo" value="{{ termo }}">
+            <input type="hidden" name="campo" value="{{ campo }}">
+        {% endif %}
+
+        <select
+            name="status"
+            class="form-control"
+            aria-label="Filtrar por status de leitura"
+        >
+            <option value="">Todos os status</option>
+
+            <option value="nao_iniciado"
+                {% if status == 'nao_iniciado' %}selected{% endif %}>
+                Não iniciado
+            </option>
+
+            <option value="lendo"
+                {% if status == 'lendo' %}selected{% endif %}>
+                Lendo
+            </option>
+
+            <option value="concluido"
+                {% if status == 'concluido' %}selected{% endif %}>
+                Concluído
+            </option>
+        </select>
+
+        <button type="submit" class="btn btn-secondary">
+            Filtrar
+        </button>
 
     </form>
 
@@ -148,6 +191,42 @@
                                     class="btn btn-secondary">
                                     Editar
                                 </a>
+
+                                <form
+                                    action="{{ url_for('alterar_status_livro', isbn=livro.isbn) }}"
+                                    method="POST"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}"
+                                    >
+
+                                    <select
+                                        name="status_leitura"
+                                        class="form-control"
+                                        aria-label="Novo status de leitura"
+                                    >
+                                        <option value="nao_iniciado"
+                                            {% if livro.status_leitura == 'nao_iniciado' %}selected{% endif %}>
+                                            Não iniciado
+                                        </option>
+
+                                        <option value="lendo"
+                                            {% if livro.status_leitura == 'lendo' %}selected{% endif %}>
+                                            Lendo
+                                        </option>
+
+                                        <option value="concluido"
+                                            {% if livro.status_leitura == 'concluido' %}selected{% endif %}>
+                                            Concluído
+                                        </option>
+                                    </select>
+
+                                    <button type="submit" class="btn btn-secondary">
+                                        Atualizar
+                                    </button>
+                                </form>
 
                                 <form
                                     action="{{ url_for('remover_livro', isbn=livro.isbn) }}"

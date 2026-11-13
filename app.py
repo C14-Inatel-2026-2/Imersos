@@ -43,6 +43,7 @@ def index():
 def listar_livros():
     termo = request.args.get("termo", "").strip()
     campo = request.args.get("campo", "titulo").strip().lower()
+    status = request.args.get("status", "").strip()
     erro_busca = None
 
     try:
@@ -56,6 +57,18 @@ def listar_livros():
         else:
             livros = service.listar_livros()
 
+        if status:
+            isbns_com_status = {
+                livro.isbn
+                for livro in service.filtrar_por_status(status)
+            }
+
+            livros = [
+                livro
+                for livro in livros
+                if livro.isbn in isbns_com_status
+            ]
+
     except ValueError as erro:
         livros = []
         erro_busca = str(erro)
@@ -65,8 +78,27 @@ def listar_livros():
         livros=livros,
         termo=termo,
         campo=campo,
+        status=status,
         erro_busca=erro_busca
     )
+
+
+@app.post("/livros/<isbn>/status")
+def alterar_status_livro(isbn):
+    novo_status = request.form.get("status_leitura", "").strip()
+
+    try:
+        service.alterar_status(isbn, novo_status)
+
+        flash(
+            "Status de leitura atualizado com sucesso!",
+            "sucesso"
+        )
+
+    except ValueError as erro:
+        flash(str(erro), "erro")
+
+    return redirect(url_for("listar_livros"))
 
 
 @app.route("/cadastrar", methods=["GET", "POST"])
