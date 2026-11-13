@@ -55,6 +55,39 @@ def ler_dados_livro():
         "status_leitura": status,
     }
 
+def ler_dados_edicao():
+    dados = {}
+
+    titulo = input("Novo título (Enter para manter): ").strip()
+    autor = input("Novo autor (Enter para manter): ").strip()
+    genero = input("Novo gênero (Enter para manter): ").strip()
+    ano = input("Novo ano (Enter para manter): ").strip()
+
+    if titulo:
+        dados["titulo"] = titulo
+
+    if autor:
+        dados["autor"] = autor
+
+    if genero:
+        dados["genero"] = genero
+
+    if ano:
+        dados["ano"] = int(ano)
+
+    print("\nNovo status de leitura:")
+    print("1 - Não iniciado")
+    print("2 - Lendo")
+    print("3 - Concluído")
+    print("Enter - Manter atual")
+
+    opcao_status = input("Status: ").strip()
+
+    if opcao_status:
+        dados["status_leitura"] = converter_status(opcao_status)
+
+    return dados
+
 def exibir_livro(livro):
     print(f"\nTítulo: {livro.titulo}")
     print(f"Autor: {livro.autor}")
@@ -97,8 +130,12 @@ def listar_livros(service):
 
 def editar_livro(service):
     isbn = input("ISBN do livro que deseja editar: ").strip()
-    print("Informe os novos dados:")
-    dados = ler_dados_livro()
+
+    print("Informe apenas os dados que deseja alterar:")
+    dados = ler_dados_edicao()
+
+    if not dados:
+        raise ValueError("Nenhum dado informado para edição")
 
     service.editar_livro(isbn, dados)
     print("Livro atualizado com sucesso!")

@@ -3,6 +3,15 @@ from terminal.app import ler_opcao, ler_dados_livro, mostrar_menu, converter_sta
 import pytest
 from terminal.app import executar
 
+from terminal.app import (
+    ler_opcao,
+    ler_dados_livro,
+    ler_dados_edicao,
+    mostrar_menu,
+    converter_status,
+    executar,
+)
+
 def test_ler_opcao(mocker):
     mocker.patch(
         "builtins.input",
@@ -115,3 +124,44 @@ def test_opcao_invalida_retorna_ao_menu(mocker, capsys):
     assert "Opção inválida!" in saida
     assert saida.count("=== Biblioteca Imersos ===") == 2
     assert "Encerrando sistema..." in saida
+
+def test_ler_dados_edicao_parcial(mocker):
+    mocker.patch(
+        "builtins.input",
+        side_effect=[
+            "1984 - Nova Edição",  # título
+            "",                    # autor
+            "",                    # gênero
+            "",                    # ano
+            "",                    # status
+        ],
+    )
+
+    dados = ler_dados_edicao()
+
+    assert dados == {
+        "titulo": "1984 - Nova Edição"
+    }
+
+
+def test_ler_dados_edicao_completa(mocker):
+    mocker.patch(
+        "builtins.input",
+        side_effect=[
+            "Novo título",
+            "Novo autor",
+            "Ficção",
+            "2020",
+            "2",
+        ],
+    )
+
+    dados = ler_dados_edicao()
+
+    assert dados == {
+        "titulo": "Novo título",
+        "autor": "Novo autor",
+        "genero": "Ficção",
+        "ano": 2020,
+        "status_leitura": "lendo",
+    }

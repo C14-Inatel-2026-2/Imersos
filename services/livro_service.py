@@ -128,7 +128,12 @@ class LivroService:
 
         indice = self._obter_indice_existente(livros, isbn)
 
-        livro = Livro(**dados)
+        dados_atualizados = {
+            **livros[indice],
+            **dados
+        }
+
+        livro = Livro(**dados_atualizados)
 
         if livro.isbn != isbn:
             self._validar_isbn_unico(
