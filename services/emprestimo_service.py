@@ -11,6 +11,16 @@ class EmprestimoService:
         self.livro_repository = livro_repository
         self.emprestimo_repository = emprestimo_repository
 
+    
+    def _montar_registro_emprestimo(self, isbn, emprestimo):
+        return {
+            "isbn": isbn,
+            "emprestado_para": emprestimo.emprestado_para,
+            "data_emprestimo": emprestimo.data_emprestimo.isoformat(),
+            "data_devolucao_prevista": emprestimo.data_devolucao_prevista.isoformat(),
+        }
+
+
     def realizar_emprestimo(self, isbn, pessoa, data_prevista, data_emprestimo=None):
         isbn = isbn.strip()
 
@@ -24,15 +34,16 @@ class EmprestimoService:
             data_emprestimo=data_emprestimo or date.today(),
             data_devolucao_prevista=data_prevista,
         )
-        registro = {
-            "isbn": isbn,
-            "emprestado_para": emprestimo.emprestado_para,
-            "data_emprestimo": emprestimo.data_emprestimo.isoformat(),
-            "data_devolucao_prevista": emprestimo.data_devolucao_prevista.isoformat(),
-        }
+
+        registro = self._montar_registro_emprestimo(
+            isbn, emprestimo
+        )
+
         ativos.append(registro)
         self.emprestimo_repository.salvar(ativos)
+
         return registro
+
 
     def listar_atrasados(self, hoje=None):
         hoje = hoje or date.today()
@@ -51,9 +62,7 @@ class EmprestimoService:
         if not any(livro["isbn"] == isbn for livro in livros):
             raise ValueError("Livro não encontrado")
 
-        emprestimos = self.emprestimo_repository.carregar()
-
-        if any(item["isbn"] == isbn for item in emprestimos):
+        if self.consultar_emprestimo(isbn) is not None:
             raise ValueError("Este livro já está emprestado")
 
         return True
