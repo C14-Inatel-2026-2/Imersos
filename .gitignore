@@ -222,3 +222,8 @@ __marimo__/
 # Relatorios gerados pelos testes
 reports/
 .coverage
+
+# Variáveis de ambiente
+.env
+.env.*
+!.env.example

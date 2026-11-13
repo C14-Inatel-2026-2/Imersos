@@ -3,20 +3,19 @@ from pathlib import Path
 
 from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_wtf.csrf import CSRFError, CSRFProtect
+from dotenv import load_dotenv
 
 from repository.emprestimo_repository import EmprestimoRepository
 from repository.livro_repository import LivroRepository
 from services.livro_service import LivroService
 
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
 app = Flask(__name__)
 
-app.config["SECRET_KEY"] = os.environ.get(
-    "SECRET_KEY", "chave-apenas-para-desenvolvimento"
-)
+app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
 
 csrf = CSRFProtect(app)
-
 
 # Configuração dos repositórios
 pasta_dados = Path(__file__).resolve().parent / "dados"
