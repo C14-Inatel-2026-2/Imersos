@@ -153,3 +153,21 @@ def test_disponibilidade_antes_e_depois_do_emprestimo(service):
 
     with pytest.raises(ValueError, match="já está emprestado"):
         service.verificar_disponibilidade(" 123 ")
+
+
+def test_registro_emprestimo_preserva_formato_json(service):
+    registro = service.realizar_emprestimo(
+        "123",
+        "Ana",
+        date(2026, 11, 20),
+        date(2026, 11, 13)
+    )
+
+    assert registro == {
+        "isbn": "123",
+        "emprestado_para": "Ana",
+        "data_emprestimo": "2026-11-13",
+        "data_devolucao_prevista": "2026-11-20",
+    }
+
+    assert service.emprestimo_repository.carregar() == [registro]
