@@ -23,8 +23,30 @@ def index():
 
 @app.get("/livros")
 def listar_livros():
-    livros = service.listar_livros()
-    return render_template("livros.html", livros=livros)
+    termo = request.args.get("termo", "").strip()
+    campo = request.args.get("campo", "titulo").strip().lower()
+    erro_busca = None
+
+    try:
+        if termo:
+            livros = service.buscar_livros(termo, campo)
+        elif "termo" in request.args:
+            livros = []
+            erro_busca = "Informe um termo para realizar a busca."
+        else:
+            livros = service.listar_livros()
+
+    except ValueError as erro:
+        livros = []
+        erro_busca = str(erro)
+
+    return render_template(
+        "livros.html",
+        livros=livros,
+        termo=termo,
+        campo=campo,
+        erro_busca=erro_busca
+    )
 
 @app.route("/cadastrar", methods=["GET", "POST"])
 def cadastrar_livro():
@@ -92,3 +114,15 @@ def editar_livro(isbn):
             ), 400
 
     return render_template("editar.html", livro=livro)
+
+@app.post("/livros/<isbn>/remover")
+def remover_livro(isbn):
+    try:
+        service.remover_livro(isbn)
+
+        flash("Livro removido com sucesso!", "sucesso")
+
+    except ValueError as erro:
+        flash(str(erro), "erro")
+
+    return redirect(url_for("listar_livros"))

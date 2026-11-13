@@ -22,13 +22,5 @@
         "genero": "Romance",
         "ano": 1839,
         "status_leitura": "nao_iniciado"
-    },
-    {
-        "titulo": "Valorant",
-        "autor": "a",
-        "isbn": "929292929292",
-        "genero": "a",
-        "ano": 2000,
-        "status_leitura": "nao_iniciado"
     }
 ]
