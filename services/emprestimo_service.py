@@ -34,16 +34,6 @@ class EmprestimoService:
         self.emprestimo_repository.salvar(ativos)
         return registro
 
-    def realizar_devolucao(self, isbn):
-        isbn = isbn.strip()
-        ativos = self.emprestimo_repository.carregar()
-        for indice, registro in enumerate(ativos):
-            if registro["isbn"] == isbn:
-                devolvido = ativos.pop(indice)
-                self.emprestimo_repository.salvar(ativos)
-                return devolvido
-        raise ValueError("Não existe empréstimo ativo para este ISBN")
-
     def listar_atrasados(self, hoje=None):
         hoje = hoje or date.today()
         return [
@@ -68,3 +58,14 @@ class EmprestimoService:
 
         return True
 
+
+    def consultar_emprestimo(self, isbn):
+        isbn = isbn.strip()
+
+        emprestimos = self.emprestimo_repository.carregar()
+
+        for registro in emprestimos:
+            if registro["isbn"] == isbn:
+                return registro
+
+        return None

@@ -55,20 +55,6 @@ def test_rejeita_data_anterior(service):
         )
 
 
-def test_devolucao_remove_emprestimo_ativo(service):
-    service.realizar_emprestimo("123", "Ana", date(2026, 11, 20))
-
-    devolvido = service.realizar_devolucao("123")
-
-    assert devolvido["isbn"] == "123"
-    assert service.emprestimo_repository.carregar() == []
-
-
-def test_rejeita_devolucao_sem_emprestimo(service):
-    with pytest.raises(ValueError, match="Não existe empréstimo ativo"):
-        service.realizar_devolucao("123")
-
-
 def test_lista_somente_atrasados(service):
     service.realizar_emprestimo(
         "123", "Ana", date(2026, 11, 13), date(2026, 11, 10)
@@ -134,18 +120,22 @@ def test_permite_editar_titulo_de_livro_emprestado(service):
     )
 
 
-def test_permite_remover_livro_apos_devolucao(service):
-    service.realizar_emprestimo(
-        "123", "Ana", date(2026, 11, 20), date(2026, 11, 10)
+def test_consultar_emprestimo_persistido(service):
+    registro = service.realizar_emprestimo(
+        "123",
+        "Ana",
+        date(2026, 11, 20),
+        date(2026, 11, 13)
     )
 
-    service.realizar_devolucao("123")
+    outro_repositorio = EmprestimoRepository(
+        service.emprestimo_repository.caminho_arquivo
+    )
 
-    livro_service = LivroService(
+    outro_service = EmprestimoService(
         service.livro_repository,
-        service.emprestimo_repository
+        outro_repositorio
     )
 
-    livro_service.remover_livro("123")
-
-    assert service.livro_repository.carregar() == []
+    assert outro_service.consultar_emprestimo("123") == registro
+    assert outro_service.consultar_emprestimo("999") is None

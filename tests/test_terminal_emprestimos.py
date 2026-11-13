@@ -3,7 +3,6 @@ from datetime import date
 
 from terminal.app import (
     realizar_emprestimo,
-    realizar_devolucao,
     listar_emprestimos_atrasados,
 )
 
@@ -21,18 +20,6 @@ def test_menu_realizar_emprestimo(mocker, capsys):
     service.realizar_emprestimo.assert_called_once_with(
         "123", "Ana", date(2026, 11, 20)
     )
-
-    assert "sucesso" in capsys.readouterr().out
-
-
-def test_menu_realizar_devolucao(mocker, capsys):
-    service = mocker.Mock()
-
-    mocker.patch("builtins.input", return_value="123")
-
-    realizar_devolucao(service)
-
-    service.realizar_devolucao.assert_called_once_with("123")
 
     assert "sucesso" in capsys.readouterr().out
 

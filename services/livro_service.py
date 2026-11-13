@@ -139,10 +139,7 @@ class LivroService:
     def editar_livro(self, isbn, dados):
         livros = self.repository.carregar()
 
-        indice = self._buscar_indice_por_isbn(livros, isbn)
-
-        if indice is None:
-            raise ValueError("Livro não encontrado")
+        indice = self._obter_indice_existente(livros, isbn)
 
         dados_atualizados = {
             **livros[indice],
@@ -172,10 +169,7 @@ class LivroService:
     def remover_livro(self, isbn):
         livros = self.repository.carregar()
 
-        indice = self._buscar_indice_por_isbn(livros, isbn)
-
-        if indice is None:
-            raise ValueError("Livro não encontrado")
+        indice = self._obter_indice_existente(livros, isbn)
 
         self._bloquear_se_emprestado(
             isbn,

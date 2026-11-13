@@ -1,12 +1,12 @@
 
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
 
 from repository.emprestimo_repository import EmprestimoRepository
 from repository.livro_repository import LivroRepository
 from services.emprestimo_service import EmprestimoService
 from services.livro_service import LivroService
-from datetime import date, datetime
+
 
 
 def mostrar_menu():
