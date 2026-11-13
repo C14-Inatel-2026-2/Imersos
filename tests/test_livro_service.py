@@ -521,3 +521,67 @@ def test_alterar_status_livro_inexistente_mensagem_padronizada(tmp_path):
 
     with pytest.raises(ValueError, match="Livro não encontrado"):
         service.alterar_status("123", "lendo")
+
+def test_editar_livro_parcial(tmp_path):
+    repo = LivroRepository(tmp_path / "livros.json")
+    service = LivroService(repo)
+
+    service.cadastrar_livro(
+        "1984",
+        "George Orwell",
+        "123",
+        "Distopia",
+        1949,
+        "nao_iniciado"
+    )
+
+    livro = service.editar_livro(
+        "123",
+        {"titulo": "1984 - Edição Atualizada"}
+    )
+
+    assert livro.titulo == "1984 - Edição Atualizada"
+    assert livro.autor == "George Orwell"
+    assert livro.isbn == "123"
+    assert livro.genero == "Distopia"
+    assert livro.ano == 1949
+    assert livro.status_leitura == "nao_iniciado"
+
+    livros_salvos = repo.carregar()
+
+    assert livros_salvos[0]["titulo"] == "1984 - Edição Atualizada"
+
+@pytest.mark.parametrize(
+    "dados_invalidos",
+    [
+        {"titulo": ""},
+        {"autor": ""},
+        {"ano": 0},
+        {"status_leitura": "abandonado"},
+    ]
+)
+def test_editar_livro_dados_invalidos_nao_altera_acervo(
+    tmp_path,
+    dados_invalidos
+):
+    repo = LivroRepository(tmp_path / "livros.json")
+    service = LivroService(repo)
+
+    service.cadastrar_livro(
+        "1984",
+        "George Orwell",
+        "123",
+        "Distopia",
+        1949,
+        "nao_iniciado"
+    )
+
+    dados_anteriores = repo.carregar()
+
+    with pytest.raises(ValueError):
+        service.editar_livro(
+            "123",
+            dados_invalidos
+        )
+
+    assert repo.carregar() == dados_anteriores
