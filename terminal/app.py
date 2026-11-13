@@ -25,6 +25,12 @@ def mostrar_menu():
 def ler_opcao():
     return input("Escolha uma opção: ")
 
+def confirmar_operacao(operacao):
+    resposta = input(
+        f"\nConfirmar {operacao}? (s/n): "
+    ).strip().lower()
+
+    return resposta == "s"
 
 def converter_status(opcao_status):
     status = {
@@ -38,6 +44,10 @@ def converter_status(opcao_status):
 
     return status
 
+def mostrar_opcoes_status():
+    print("1 - Não iniciado")
+    print("2 - Lendo")
+    print("3 - Concluído")
 
 def ler_dados_livro():
     titulo = input("Título: ")
@@ -47,10 +57,8 @@ def ler_dados_livro():
     ano = int(input("Ano: "))
 
     print("\nStatus de leitura:")
-    print("1 - Não iniciado")
-    print("2 - Lendo")
-    print("3 - Concluído")
-
+    mostrar_opcoes_status()
+ 
     opcao_status = input("Status: ")
     status = converter_status(opcao_status)
 
@@ -82,13 +90,11 @@ def ler_dados_edicao():
 
     if ano:
         dados["ano"] = int(ano)
-
+    
     print("\nNovo status de leitura:")
-    print("1 - Não iniciado")
-    print("2 - Lendo")
-    print("3 - Concluído")
+    mostrar_opcoes_status()
     print("Enter - Manter atual")
-
+    
     opcao_status = input("Status: ").strip()
 
     if opcao_status:
@@ -155,13 +161,13 @@ def remover_livro(service):
     service.remover_livro(isbn)
     print("Livro removido com sucesso!")
 
-
 def realizar_emprestimo(service):
     isbn = input("ISBN do livro: ").strip()
 
     service.verificar_disponibilidade(isbn)
 
     pessoa = input("Emprestado para: ").strip()
+
     data_texto = input(
         "Data prevista de devolução (DD-MM-AAAA): "
     ).strip()
@@ -175,10 +181,20 @@ def realizar_emprestimo(service):
             "Data inválida. Use DD-MM-AAAA"
         ) from erro
 
-    service.realizar_emprestimo(isbn, pessoa, data_prevista)
+    print("\n=== Confirmar empréstimo ===")
+    print(f"ISBN: {isbn}")
+    print(f"Emprestado para: {pessoa}")
+    print(f"Devolução prevista: {data_prevista:%d-%m-%Y}")
+
+    if not confirmar_operacao("empréstimo"):
+        print("Empréstimo cancelado.")
+        return
+
+    service.realizar_emprestimo(
+        isbn, pessoa, data_prevista
+    )
 
     print("Empréstimo realizado com sucesso!")
-
 
 def listar_emprestimos_atrasados(service):
     atrasados = service.listar_atrasados()
@@ -190,20 +206,47 @@ def listar_emprestimos_atrasados(service):
     print("\n=== Empréstimos atrasados ===")
 
     for item in atrasados:
+        data_prevista = datetime.fromisoformat(
+            item["data_devolucao_prevista"]
+        ).strftime("%d-%m-%Y")
+
         print(
             f"ISBN: {item['isbn']} | "
             f"Pessoa: {item['emprestado_para']} | "
-            f"Devolução prevista: {item['data_devolucao_prevista']}"
+            f"Devolução prevista: {data_prevista}"
         )
 
 def realizar_devolucao(service):
-    isbn = input("ISBN do livro devolvido: ").strip()
+    isbn = input(
+        "ISBN do livro devolvido: "
+    ).strip()
+
+    emprestimo = service.consultar_emprestimo(isbn)
+
+    if emprestimo is None:
+        raise ValueError(
+            "Livro não possui empréstimo ativo."
+        )
+
+    data_prevista = datetime.fromisoformat(
+        emprestimo["data_devolucao_prevista"]
+    ).strftime("%d-%m-%Y")
+
+    print("\n=== Confirmar devolução ===")
+    print(f"ISBN: {isbn}")
+    print(
+        f"Emprestado para: "
+        f"{emprestimo['emprestado_para']}"
+    )
+    print(f"Devolução prevista: {data_prevista}")
+
+    if not confirmar_operacao("devolução"):
+        print("Devolução cancelada.")
+        return
 
     service.realizar_devolucao(isbn)
 
     print("Devolução registrada com sucesso!")
-
-
 
 def executar():
     pasta_dados = Path(__file__).resolve().parents[1] / "dados"

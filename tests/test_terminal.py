@@ -1,5 +1,5 @@
 
-from terminal.app import ler_opcao, ler_dados_livro, mostrar_menu, converter_status, executar
+from terminal.app import ler_opcao, ler_dados_livro, mostrar_menu, converter_status, executar, mostrar_opcoes_status
 import pytest
 from terminal.app import executar
 
@@ -165,3 +165,14 @@ def test_ler_dados_edicao_completa(mocker):
         "ano": 2020,
         "status_leitura": "lendo",
     }
+
+
+
+def test_mostrar_opcoes_status(capsys):
+    mostrar_opcoes_status()
+
+    saida = capsys.readouterr().out
+
+    assert "1 - Não iniciado" in saida
+    assert "2 - Lendo" in saida
+    assert "3 - Concluído" in saida
