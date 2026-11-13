@@ -148,3 +148,118 @@ def test_rejeitar_post_sem_csrf(ambiente_web):
 
     assert resposta.status_code == 302
     assert servico.listar_livros() == []
+
+def cadastrar(servico, isbn, titulo, status="nao_iniciado"):
+    servico.cadastrar_livro(
+        titulo=titulo,
+        autor="Autor de Teste",
+        isbn=isbn,
+        genero="Romance",
+        ano=2020,
+        status_leitura=status,
+    )
+
+
+def test_alterar_status_livro(ambiente_web):
+    cliente, servico, _ = ambiente_web
+    cadastrar(servico, "111", "Livro A")
+
+    resposta = cliente.post(
+        "/livros/111/status",
+        data={"status_leitura": "lendo"}
+    )
+
+    assert resposta.status_code == 302
+    assert servico.listar_livros()[0].status_leitura == "lendo"
+
+
+def test_alterar_status_invalido_nao_altera_livro(ambiente_web):
+    cliente, servico, _ = ambiente_web
+    cadastrar(servico, "111", "Livro A")
+
+    resposta = cliente.post(
+        "/livros/111/status",
+        data={"status_leitura": "abandonado"},
+        follow_redirects=True
+    )
+
+    assert "Status de leitura invalido" in resposta.get_data(as_text=True)
+    assert servico.listar_livros()[0].status_leitura == "nao_iniciado"
+
+
+def test_alterar_status_livro_inexistente(ambiente_web):
+    cliente, _, _ = ambiente_web
+
+    resposta = cliente.post(
+        "/livros/999/status",
+        data={"status_leitura": "lendo"},
+        follow_redirects=True
+    )
+
+    assert "Livro não encontrado" in resposta.get_data(as_text=True)
+
+
+def test_filtrar_por_status(ambiente_web):
+    cliente, servico, _ = ambiente_web
+    cadastrar(servico, "111", "Livro A", "lendo")
+    cadastrar(servico, "222", "Livro B", "concluido")
+
+    resposta = cliente.get("/livros?status=lendo")
+    html = resposta.get_data(as_text=True)
+
+    assert resposta.status_code == 200
+    assert "Livro A" in html
+    assert "Livro B" not in html
+
+
+def test_filtrar_por_status_invalido(ambiente_web):
+    cliente, servico, _ = ambiente_web
+    cadastrar(servico, "111", "Livro A")
+
+    resposta = cliente.get("/livros?status=abandonado")
+    html = resposta.get_data(as_text=True)
+
+    assert "Status de leitura invalido" in html
+    assert "Livro A" not in html
+
+
+def test_busca_combinada_com_filtro_de_status(ambiente_web):
+    cliente, servico, _ = ambiente_web
+    cadastrar(servico, "111", "Duna", "lendo")
+    cadastrar(servico, "222", "Duna Messias", "concluido")
+    cadastrar(servico, "333", "Outro", "lendo")
+
+    resposta = cliente.get("/livros?termo=duna&campo=titulo&status=lendo")
+    html = resposta.get_data(as_text=True)
+
+    assert "Duna" in html
+    assert "Duna Messias" not in html
+    assert "Outro" not in html
+
+
+def test_buscar_livros_por_titulo(ambiente_web):
+    cliente, servico, _ = ambiente_web
+    cadastrar(servico, "111", "Livro A")
+    cadastrar(servico, "222", "Outro")
+
+    resposta = cliente.get("/livros?termo=livro&campo=titulo")
+    html = resposta.get_data(as_text=True)
+
+    assert "Livro A" in html
+    assert "Outro" not in html
+
+
+def test_busca_com_termo_vazio(ambiente_web):
+    cliente, _, _ = ambiente_web
+
+    resposta = cliente.get("/livros?termo=&campo=titulo")
+
+    assert "Informe um termo" in resposta.get_data(as_text=True)
+
+
+def test_busca_com_campo_invalido(ambiente_web):
+    cliente, _, _ = ambiente_web
+
+    resposta = cliente.get("/livros?termo=x&campo=isbn")
+
+    assert "Campo de busca invalido" in resposta.get_data(as_text=True)
