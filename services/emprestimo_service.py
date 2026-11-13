@@ -51,9 +51,7 @@ class EmprestimoService:
         if not any(livro["isbn"] == isbn for livro in livros):
             raise ValueError("Livro não encontrado")
 
-        emprestimos = self.emprestimo_repository.carregar()
-
-        if any(item["isbn"] == isbn for item in emprestimos):
+        if self.consultar_emprestimo(isbn) is not None:
             raise ValueError("Este livro já está emprestado")
 
         return True

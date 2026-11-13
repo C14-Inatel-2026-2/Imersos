@@ -139,3 +139,17 @@ def test_consultar_emprestimo_persistido(service):
 
     assert outro_service.consultar_emprestimo("123") == registro
     assert outro_service.consultar_emprestimo("999") is None
+
+
+def test_disponibilidade_antes_e_depois_do_emprestimo(service):
+    assert service.verificar_disponibilidade(" 123 ") is True
+
+    service.realizar_emprestimo(
+        "123",
+        "Ana",
+        date(2026, 11, 20),
+        date(2026, 11, 13)
+    )
+
+    with pytest.raises(ValueError, match="já está emprestado"):
+        service.verificar_disponibilidade(" 123 ")
