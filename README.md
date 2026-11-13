@@ -11,8 +11,6 @@ O sistema não tem interface gráfica nem banco de dados: a interação é feita
 
 | Pasta | Responsabilidade |
 
-|---|---|
-
 | `models/` | Classes de domínio (`Livro`, `Emprestimo`) e suas validações |
 
 | `repository/` | Persistência dos dados em arquivo JSON |
@@ -26,8 +24,6 @@ O sistema não tem interface gráfica nem banco de dados: a interação é feita
 ### Integrantes
 
 | Integrante | Responsabilidade |
-
-|---|---|
 
 | Giuliana Batistella | `services/` |
 
@@ -87,19 +83,17 @@ As histórias estão cadastradas no Jira, com critérios de aceitação no forma
 
 | # | História | Responsável | Épico | Status | Card |
 
-|---|---|---|---|---|---|
-
 | 1 | Cadastrar livro no acervo | Kauan | Livros | A fazer | [SCRUM-12](https://imersos.atlassian.net/browse/SCRUM-12) |
 
-| 2 | Persistência dos dados | Juh | Persistência | A fazer | [SCRUM-15](https://imersos.atlassian.net/browse/SCRUM-15) |
+| 2 | Persistência dos dados | Júlia | Persistência | A fazer | [SCRUM-15](https://imersos.atlassian.net/browse/SCRUM-15) |
 
-| 3 | Buscar livros por título, autor ou gênero | Giu | Livros | A fazer | [SCRUM-9](https://imersos.atlassian.net/browse/SCRUM-9) |
+| 3 | Buscar livros por título, autor ou gênero | Giuliana | Livros | A fazer | [SCRUM-9](https://imersos.atlassian.net/browse/SCRUM-9) |
 
-| 4 | Interface via Terminal | Labubu | Interface | A fazer | [SCRUM-14](https://imersos.atlassian.net/browse/SCRUM-14) |
+| 4 | Interface via Terminal | Luis Otavio | Interface | A fazer | [SCRUM-14](https://imersos.atlassian.net/browse/SCRUM-14) |
 
 | 5 | Controlar status de leitura dos livros | Kauan | Livros | A fazer | [SCRUM-13](https://imersos.atlassian.net/browse/SCRUM-13) |
 
-| 6 | Registrar empréstimo de livro | Mile | Empréstimos | A fazer | [SCRUM-10](https://imersos.atlassian.net/browse/SCRUM-10) |
+| 6 | Registrar empréstimo de livro | Camile | Empréstimos | A fazer | [SCRUM-10](https://imersos.atlassian.net/browse/SCRUM-10) |
 
 O backlog também possui histórias planejadas para as próximas sprints, incluindo listar, editar e remover livros, filtrar por status, registrar devoluções e listar empréstimos atrasados.
 
@@ -287,52 +281,23 @@ O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em ép
 
 Durante o desenvolvimento do Imersos, ferramentas de inteligência artificial foram utilizadas como apoio em diferentes etapas do projeto. As sugestões foram analisadas pelos integrantes antes de serem aplicadas, respeitando os requisitos definidos para o trabalho.
 
-### Kauan de Abreu Carvalho — Modelo Livro
+**Ferramentas utilizadas:** ChatGPT (OpenAI), Claude (Anthropic).
 
-**Ferramenta utilizada:** ChatGPT (OpenAI).
+**Finalidades:** 
+- **Geração e revisão de código.**
+- **Testes:** sugestões de casos de teste com pytest e pytest-mock.
+- **Refatoração:** identificação de code smells e sugestão de extrações de métodos, documentadas na seção *Refactorings*.
+- **Debugging e ambiente:** entendimento de erros na execução da suíte de testes e na configuração do Docker e do pipeline.
+- **Revisão e documentação:** revisão de Pull Requests, conferência do que já estava implementado no repositório e escrita do README.
 
-**Finalidades:** Auxílio na implementação do modelo Livro, criação de testes, identificação de code smells, refatoração, revisão de Pull Requests, documentação e configuração do Docker.
+**Exemplos reais de prompts:**
+1. **Prompt:** "Confere no repositório se o método remover livro por ISBN já foi feito"
+   **Resultado:** A IA identificou o método `remover_livro` no `LivroService`, a opção 4 do menu no terminal e os testes correspondentes. A informação foi conferida pelo grupo no código.
+2. **Prompt:** "Analisa a pr da Giuliana e confere se está tudo de cordo para seguir para o merge"<br>
+   **Resultado:** A análise auxiliou na identificação de uma inconsistência na documentação do README e na conferência dos refactorings realizados, contribuindo para a revisão do código antes do merge.
+3. **Prompt:** "Como posso testar nossa aplicação?"<br>
+   **Resultado:**  A IA orientou a execução dos testes automatizados com Pytest e o teste manual da aplicação pelo terminal. Durante o teste foi identificado um problema de importação, e a forma de execução foi ajustada para poetry run python -m terminal.app. Os comandos foram executados e conferidos pelo grupo.
 
 **Dinâmica de uso:** A IA foi utilizada individualmente para esclarecer dúvidas, revisar implementações e sugerir melhorias. As respostas foram avaliadas e adaptadas conforme as necessidades do projeto.
 
 **Atividades realizadas manualmente:** Execução dos testes, organização dos commits, abertura das Pull Requests, validação das funcionalidades e testes práticos da aplicação no Docker.
-
-### Giuliana Batistella — Services
-
-**Ferramentas utilizadas:** A preencher.
-
-**Finalidades:** A preencher.
-
-**Dinâmica de uso:** A preencher.
-
-**Atividades realizadas manualmente:** A preencher.
-
-### Júlia Seixas Souza — Repository
-
-**Ferramentas utilizadas:** A preencher.
-
-**Finalidades:** A preencher.
-
-**Dinâmica de uso:** A preencher.
-
-**Atividades realizadas manualmente:** A preencher.
-
-### Camile Brunieri Laraia — Empréstimos e CI/CD
-
-**Ferramentas utilizadas:** A preencher.
-
-**Finalidades:** A preencher.
-
-**Dinâmica de uso:** A preencher.
-
-**Atividades realizadas manualmente:** A preencher.
-
-### Luis Otávio Garcia Godoy da Costa — Terminal
-
-**Ferramentas utilizadas:** A preencher.
-
-**Finalidades:** A preencher.
-
-**Dinâmica de uso:** A preencher.
-
-**Atividades realizadas manualmente:** A preencher.
