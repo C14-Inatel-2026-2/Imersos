@@ -12,6 +12,7 @@
                 <th>Gênero</th>
                 <th>Ano</th>
                 <th>Status</th>
+                <th>Ações</th>
             </tr>
         </thead>
 
@@ -19,11 +20,21 @@
             {% for livro in livros %}
             <tr>
                 <td>{{ livro.titulo }}</td>
+                {% with mensagens = get_flashed_messages(with_categories=true) %}
+                    {% for categoria, mensagem in mensagens %}
+                        <p class="{{ categoria }}">{{ mensagem }}</p>
+                    {% endfor %}
+                {% endwith %}
                 <td>{{ livro.autor }}</td>
                 <td>{{ livro.isbn }}</td>
                 <td>{{ livro.genero }}</td>
                 <td>{{ livro.ano }}</td>
                 <td>{{ livro.status_leitura }}</td>
+                <td>
+                    <a href="{{ url_for('editar_livro', isbn=livro.isbn) }}">
+                        Editar
+                    </a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

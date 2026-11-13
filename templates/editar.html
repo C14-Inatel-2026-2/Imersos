@@ -1,0 +1,79 @@
+<h1>Editar Livro</h1>
+
+<a href="{{ url_for('listar_livros') }}">
+    Voltar ao acervo
+</a>
+
+{% if erro %}
+    <p>{{ erro }}</p>
+{% endif %}
+
+<form method="POST">
+
+    <label for="titulo">Título:</label>
+    <input
+        type="text"
+        id="titulo"
+        name="titulo"
+        value="{{ livro.titulo }}"
+        required
+    >
+
+    <label for="autor">Autor:</label>
+    <input
+        type="text"
+        id="autor"
+        name="autor"
+        value="{{ livro.autor }}"
+        required
+    >
+
+    <label for="isbn">ISBN:</label>
+    <input
+        type="text"
+        id="isbn"
+        name="isbn"
+        value="{{ livro.isbn }}"
+        required
+    >
+
+    <label for="genero">Gênero:</label>
+    <input
+        type="text"
+        id="genero"
+        name="genero"
+        value="{{ livro.genero }}"
+    >
+
+    <label for="ano">Ano:</label>
+    <input
+        type="number"
+        id="ano"
+        name="ano"
+        min="1"
+        value="{{ livro.ano }}"
+        required
+    >
+
+    <label for="status_leitura">Status de leitura:</label>
+
+    <select id="status_leitura" name="status_leitura">
+        <option value="nao_iniciado"
+            {% if livro.status_leitura == "nao_iniciado" %}selected{% endif %}>
+            Não iniciado
+        </option>
+
+        <option value="lendo"
+            {% if livro.status_leitura == "lendo" %}selected{% endif %}>
+            Lendo
+        </option>
+
+        <option value="concluido"
+            {% if livro.status_leitura == "concluido" %}selected{% endif %}>
+            Concluído
+        </option>
+    </select>
+
+    <button type="submit">Salvar alterações</button>
+
+</form>
