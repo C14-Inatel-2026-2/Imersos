@@ -20,9 +20,18 @@
             </a>
 
             <nav class="nav-links">
-                <a href="{{ url_for('index') }}">Início</a>
-                <a href="{{ url_for('listar_livros') }}">Acervo</a>
-                <a href="{{ url_for('cadastrar_livro') }}">Cadastrar</a>
+                <a href="{{ url_for('index') }}"
+                class="{{ 'active' if request.endpoint == 'index' else '' }}">
+                    Início
+                </a>
+                <a href="{{ url_for('listar_livros') }}"
+                class="{{ 'active' if request.endpoint in ['listar_livros', 'editar_livro'] else '' }}">
+                    Acervo
+                </a>
+                <a href="{{ url_for('cadastrar_livro') }}"
+                class="{{ 'active' if request.endpoint == 'cadastrar_livro' else '' }}">
+                    Cadastrar
+                </a>
             </nav>
         </div>
     </header>

@@ -89,8 +89,21 @@
                         <td>{{ livro.autor }}</td>
                         <td>{{ livro.genero }}</td>
                         <td>{{ livro.ano }}</td>
-                        <td>{{ livro.status_leitura }}</td>
-
+                        <td>
+                            {% if livro.status_leitura == "nao_iniciado" %}
+                                <span class="status status-pendente">
+                                    Não iniciado
+                                </span>
+                            {% elif livro.status_leitura == "lendo" %}
+                                <span class="status status-lendo">
+                                    Lendo
+                                </span>
+                            {% elif livro.status_leitura == "concluido" %}
+                                <span class="status status-concluido">
+                                    Concluído
+                                </span>
+                            {% endif %}
+                        </td>
                         <td>
                             <div class="actions">
                                 <a

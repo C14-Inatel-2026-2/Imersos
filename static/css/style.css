@@ -108,19 +108,23 @@ h1 {
 /* Mensagens */
 
 .alert {
-    padding: 14px 18px;
-    border-radius: 6px;
+    padding: 15px 18px;
+    border-radius: 8px;
     margin-bottom: 20px;
+    font-size: 14px;
+    border: 1px solid transparent;
 }
 
-.sucesso {
-    background-color: #DCFCE7;
+.alert.sucesso {
+    background: #DCFCE7;
     color: #166534;
+    border-color: #86EFAC;
 }
 
-.erro {
-    background-color: #FEE2E2;
+.alert.erro {
+    background: #FEE2E2;
     color: #991B1B;
+    border-color: #FCA5A5;
 }
 
 /* Responsividade */
@@ -324,5 +328,78 @@ h1 {
 
     .books-table {
         min-width: 700px;
+    }
+}
+
+/* Status de leitura */
+
+.status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status-pendente {
+    background: #F1F5F9;
+    color: #475569;
+}
+
+.status-lendo {
+    background: #DBEAFE;
+    color: #1D4ED8;
+}
+
+.status-concluido {
+    background: #DCFCE7;
+    color: #166534;
+}
+
+.nav-links a {
+    padding: 8px 4px;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.nav-links a.active {
+    border-bottom-color: #60A5FA;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .container {
+        width: 94%;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .page-header {
+        align-items: stretch;
+    }
+
+    .page-header .btn {
+        text-align: center;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .nav-links {
+        justify-content: center;
+        flex-wrap: wrap;
     }
 }
