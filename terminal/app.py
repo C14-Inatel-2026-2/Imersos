@@ -156,7 +156,6 @@ def remover_livro(service):
     print("Livro removido com sucesso!")
 
 
-
 def realizar_emprestimo(service):
     isbn = input("ISBN do livro: ").strip()
 
@@ -179,13 +178,6 @@ def realizar_emprestimo(service):
     service.realizar_emprestimo(isbn, pessoa, data_prevista)
 
     print("Empréstimo realizado com sucesso!")
-
-
-
-def realizar_devolucao(service):
-    isbn = input("ISBN do livro devolvido: ").strip()
-    service.realizar_devolucao(isbn)
-    print("Devolução registrada com sucesso!")
 
 
 def listar_emprestimos_atrasados(service):
@@ -243,7 +235,7 @@ def executar():
             elif opcao == "5":
                 realizar_emprestimo(emprestimo_service)
             elif opcao == "6":
-                realizar_devolucao(emprestimo_service)
+                print("Função de devolução ainda não implementada.")
             elif opcao == "7":
                 listar_emprestimos_atrasados(emprestimo_service)
             elif opcao == "8":
