@@ -125,6 +125,41 @@ poetry install --no-root
 
 ```
 
+### Executar a interface web
+
+O Imersos também possui uma interface web desenvolvida com Flask,
+que permite listar, buscar, cadastrar, editar e remover livros
+diretamente pelo navegador.
+
+Após instalar as dependências, crie um arquivo `.env`
+na raiz do projeto, utilizando `.env.example` como referência.
+
+Gere uma chave secreta:
+
+```bash
+poetry run python -c "import secrets; print(secrets.token_hex(32))"
+```
+
+Adicione o resultado ao `.env`:
+
+```env
+SECRET_KEY=sua_chave_gerada
+```
+
+Para iniciar a aplicação:
+
+```bash
+poetry run flask --app app run --debug
+```
+
+Acesse: http://127.0.0.1:5000
+
+A interface web utiliza os mesmos serviços e arquivos JSON
+da aplicação de terminal.
+
+**Observação:** a execução acima é destinada ao ambiente local
+de desenvolvimento.
+
 ### Executar a aplicação
 
 A interface principal está localizada em `terminal/app.py`. A execução interativa completa depende da integração das operações do menu com as funcionalidades do sistema.
