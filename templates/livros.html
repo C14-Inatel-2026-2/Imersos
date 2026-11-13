@@ -1,5 +1,3 @@
-
-
 {% extends "base.html" %}
 
 {% block title %}Acervo - Imersos{% endblock %}
@@ -7,6 +5,7 @@
 {% block content %}
 
 <div class="page-header">
+
     <div>
         <h1>Meu acervo</h1>
         <p>Gerencie seus livros cadastrados.</p>
@@ -16,26 +15,39 @@
        class="btn btn-primary">
         + Novo livro
     </a>
+
 </div>
 
-<section class="card">
-    <form action="{{ url_for('listar_livros') }}"
-          method="GET"
-          class="search-form">
 
-        <select name="campo" class="form-control">
+<section class="card">
+
+    <form
+        action="{{ url_for('listar_livros') }}"
+        method="GET"
+        class="search-form"
+    >
+
+        <select
+            name="campo"
+            class="form-control"
+            aria-label="Campo de busca"
+        >
+
             <option value="titulo"
-                {% if campo == "titulo" %}selected{% endif %}>
+                {% if campo == 'titulo' %}selected{% endif %}>
                 Título
             </option>
+
             <option value="autor"
-                {% if campo == "autor" %}selected{% endif %}>
+                {% if campo == 'autor' %}selected{% endif %}>
                 Autor
             </option>
+
             <option value="genero"
-                {% if campo == "genero" %}selected{% endif %}>
+                {% if campo == 'genero' %}selected{% endif %}>
                 Gênero
             </option>
+
         </select>
 
         <input
@@ -43,6 +55,7 @@
             name="termo"
             class="form-control search-input"
             placeholder="Digite sua pesquisa..."
+            aria-label="Termo de busca"
             value="{{ termo | default('', true) }}"
             required
         >
@@ -55,19 +68,27 @@
            class="btn btn-secondary">
             Limpar
         </a>
+
     </form>
+
 </section>
 
+
 {% if erro_busca %}
-    <div class="alert erro">{{ erro_busca }}</div>
+    <div class="alert erro">
+        {{ erro_busca }}
+    </div>
 {% endif %}
+
 
 <section class="card">
 
     {% if livros %}
 
         <div class="table-scroll">
+
             <table class="books-table">
+
                 <thead>
                     <tr>
                         <th>Título</th>
@@ -80,32 +101,48 @@
                 </thead>
 
                 <tbody>
+
                     {% for livro in livros %}
+
                     <tr>
+
                         <td>
                             <strong>{{ livro.titulo }}</strong>
                             <small>ISBN: {{ livro.isbn }}</small>
                         </td>
+
                         <td>{{ livro.autor }}</td>
+
                         <td>{{ livro.genero }}</td>
+
                         <td>{{ livro.ano }}</td>
+
                         <td>
-                            {% if livro.status_leitura == "nao_iniciado" %}
+                            {% if livro.status_leitura == 'nao_iniciado' %}
+
                                 <span class="status status-pendente">
                                     Não iniciado
                                 </span>
-                            {% elif livro.status_leitura == "lendo" %}
+
+                            {% elif livro.status_leitura == 'lendo' %}
+
                                 <span class="status status-lendo">
                                     Lendo
                                 </span>
-                            {% elif livro.status_leitura == "concluido" %}
+
+                            {% elif livro.status_leitura == 'concluido' %}
+
                                 <span class="status status-concluido">
                                     Concluído
                                 </span>
+
                             {% endif %}
                         </td>
+
                         <td>
+
                             <div class="actions">
+
                                 <a
                                     href="{{ url_for('editar_livro', isbn=livro.isbn) }}"
                                     class="btn btn-secondary">
@@ -115,26 +152,43 @@
                                 <form
                                     action="{{ url_for('remover_livro', isbn=livro.isbn) }}"
                                     method="POST"
-                                    onsubmit="return confirm('Deseja remover este livro?');">
+                                    onsubmit="return confirm('Deseja realmente remover este livro?');"
+                                >
+
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}"
+                                    >
 
                                     <button
                                         type="submit"
                                         class="btn btn-danger">
                                         Remover
                                     </button>
+
                                 </form>
+
                             </div>
+
                         </td>
+
                     </tr>
+
                     {% endfor %}
+
                 </tbody>
+
             </table>
+
         </div>
 
     {% elif not erro_busca %}
+
         <p class="empty-message">
             Nenhum livro encontrado.
         </p>
+
     {% endif %}
 
 </section>
