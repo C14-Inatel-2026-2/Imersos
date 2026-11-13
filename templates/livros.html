@@ -1,0 +1,33 @@
+<h1>Acervo de Livros</h1>
+
+<a href="{{ url_for('index') }}">Página inicial</a>
+
+{% if livros %}
+    <table>
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>ISBN</th>
+                <th>Gênero</th>
+                <th>Ano</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for livro in livros %}
+            <tr>
+                <td>{{ livro.titulo }}</td>
+                <td>{{ livro.autor }}</td>
+                <td>{{ livro.isbn }}</td>
+                <td>{{ livro.genero }}</td>
+                <td>{{ livro.ano }}</td>
+                <td>{{ livro.status_leitura }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Nenhum livro cadastrado.</p>
+{% endif %}
