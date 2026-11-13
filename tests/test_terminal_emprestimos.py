@@ -13,7 +13,12 @@ def test_menu_realizar_emprestimo(mocker, capsys):
 
     mocker.patch(
         "builtins.input",
-        side_effect=["123", "Ana", "20-11-2026"]
+        side_effect=[
+            "123",
+            "Ana",
+            "20-11-2026",
+            "s"
+        ]
     )
 
     realizar_emprestimo(service)
@@ -41,13 +46,61 @@ def test_menu_listar_atrasados(mocker, capsys):
 def test_menu_realizar_devolucao(mocker, capsys):
     service = mocker.Mock()
 
+    service.consultar_emprestimo.return_value = {
+        "isbn": "123",
+        "emprestado_para": "Ana",
+        "data_devolucao_prevista": "2026-11-20",
+    }
+
     mocker.patch(
         "builtins.input",
-        return_value="123"
+        side_effect=["123", "s"]
     )
 
     realizar_devolucao(service)
 
-    service.realizar_devolucao.assert_called_once_with("123")
+    service.realizar_devolucao.assert_called_once_with(
+        "123"
+    )
 
-    assert "Devolução registrada com sucesso!" in capsys.readouterr().out
+    assert (
+        "Devolução registrada com sucesso!"
+        in capsys.readouterr().out
+    )
+
+def test_cancelar_emprestimo(mocker):
+    service = mocker.Mock()
+
+    mocker.patch(
+        "builtins.input",
+        side_effect=[
+            "123",
+            "Ana",
+            "20-11-2026",
+            "n"
+        ]
+    )
+
+    realizar_emprestimo(service)
+
+    service.realizar_emprestimo.assert_not_called()
+
+
+def test_cancelar_devolucao(mocker):
+    service = mocker.Mock()
+
+    service.consultar_emprestimo.return_value = {
+        "isbn": "123",
+        "emprestado_para": "Ana",
+        "data_devolucao_prevista": "2026-11-20",
+    }
+
+    mocker.patch(
+        "builtins.input",
+        side_effect=["123", "n"]
+    )
+
+    realizar_devolucao(service)
+
+    service.realizar_devolucao.assert_not_called()
+

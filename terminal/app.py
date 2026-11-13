@@ -155,13 +155,13 @@ def remover_livro(service):
     service.remover_livro(isbn)
     print("Livro removido com sucesso!")
 
-
 def realizar_emprestimo(service):
     isbn = input("ISBN do livro: ").strip()
 
     service.verificar_disponibilidade(isbn)
 
     pessoa = input("Emprestado para: ").strip()
+
     data_texto = input(
         "Data prevista de devolução (DD-MM-AAAA): "
     ).strip()
@@ -175,10 +175,24 @@ def realizar_emprestimo(service):
             "Data inválida. Use DD-MM-AAAA"
         ) from erro
 
-    service.realizar_emprestimo(isbn, pessoa, data_prevista)
+    print("\n=== Confirmar empréstimo ===")
+    print(f"ISBN: {isbn}")
+    print(f"Emprestado para: {pessoa}")
+    print(f"Devolução prevista: {data_prevista:%d-%m-%Y}")
+
+    confirmacao = input(
+        "\nConfirmar empréstimo? (s/n): "
+    ).strip().lower()
+
+    if confirmacao != "s":
+        print("Empréstimo cancelado.")
+        return
+
+    service.realizar_emprestimo(
+        isbn, pessoa, data_prevista
+    )
 
     print("Empréstimo realizado com sucesso!")
-
 
 def listar_emprestimos_atrasados(service):
     atrasados = service.listar_atrasados()
@@ -190,19 +204,51 @@ def listar_emprestimos_atrasados(service):
     print("\n=== Empréstimos atrasados ===")
 
     for item in atrasados:
+        data_prevista = datetime.fromisoformat(
+            item["data_devolucao_prevista"]
+        ).strftime("%d-%m-%Y")
+
         print(
             f"ISBN: {item['isbn']} | "
             f"Pessoa: {item['emprestado_para']} | "
-            f"Devolução prevista: {item['data_devolucao_prevista']}"
+            f"Devolução prevista: {data_prevista}"
         )
 
 def realizar_devolucao(service):
-    isbn = input("ISBN do livro devolvido: ").strip()
+    isbn = input(
+        "ISBN do livro devolvido: "
+    ).strip()
+
+    emprestimo = service.consultar_emprestimo(isbn)
+
+    if emprestimo is None:
+        raise ValueError(
+            "Livro não possui empréstimo ativo."
+        )
+
+    data_prevista = datetime.fromisoformat(
+        emprestimo["data_devolucao_prevista"]
+    ).strftime("%d-%m-%Y")
+
+    print("\n=== Confirmar devolução ===")
+    print(f"ISBN: {isbn}")
+    print(
+        f"Emprestado para: "
+        f"{emprestimo['emprestado_para']}"
+    )
+    print(f"Devolução prevista: {data_prevista}")
+
+    confirmacao = input(
+        "\nConfirmar devolução? (s/n): "
+    ).strip().lower()
+
+    if confirmacao != "s":
+        print("Devolução cancelada.")
+        return
 
     service.realizar_devolucao(isbn)
 
     print("Devolução registrada com sucesso!")
-
 
 
 def executar():
