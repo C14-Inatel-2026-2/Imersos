@@ -1,20 +1,27 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Imersos - Biblioteca</title>
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <h1>Biblioteca Imersos</h1>
-    <p>Gerencie seu acervo de livros.</p>
-    <a href="{{ url_for('listar_livros') }}">
+{% extends "base.html" %}
+
+{% block title %}Início - Imersos{% endblock %}
+
+{% block content %}
+
+<div class="card">
+    <h1>Bem-vindo ao Imersos</h1>
+
+    <p>
+        Organize seus livros e acompanhe seu acervo
+        de forma simples e prática.
+    </p>
+
+    <a href="{{ url_for('listar_livros') }}"
+       class="btn btn-primary">
         Visualizar acervo
     </a>
-    <a href="{{ url_for('cadastrar_livro') }}">
-        Cadastrar novo livro
+
+    <a href="{{ url_for('cadastrar_livro') }}"
+       class="btn btn-primary">
+        Cadastrar livro
     </a>
-</body>
-</html>
+</div>
+
+{% endblock %}
+

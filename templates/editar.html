@@ -1,79 +1,103 @@
-<h1>Editar Livro</h1>
+{% extends "base.html" %}
 
-<a href="{{ url_for('listar_livros') }}">
-    Voltar ao acervo
-</a>
+{% block title %}Editar livro - Imersos{% endblock %}
 
-{% if erro %}
-    <p>{{ erro }}</p>
-{% endif %}
+{% block content %}
 
-<form method="POST">
+<div class="page-header">
+    <div>
+        <h1>Editar livro</h1>
+        <p>Atualize as informações da obra.</p>
+    </div>
+</div>
 
-    <label for="titulo">Título:</label>
-    <input
-        type="text"
-        id="titulo"
-        name="titulo"
-        value="{{ livro.titulo }}"
-        required
-    >
+<section class="card form-card">
 
-    <label for="autor">Autor:</label>
-    <input
-        type="text"
-        id="autor"
-        name="autor"
-        value="{{ livro.autor }}"
-        required
-    >
+    {% if erro %}
+        <div class="alert erro">{{ erro }}</div>
+    {% endif %}
 
-    <label for="isbn">ISBN:</label>
-    <input
-        type="text"
-        id="isbn"
-        name="isbn"
-        value="{{ livro.isbn }}"
-        required
-    >
+    <form method="POST">
 
-    <label for="genero">Gênero:</label>
-    <input
-        type="text"
-        id="genero"
-        name="genero"
-        value="{{ livro.genero }}"
-    >
+        <div class="field">
+            <label for="titulo">Título</label>
+            <input type="text" id="titulo" name="titulo"
+                   class="form-control"
+                   value="{{ request.form.get('titulo', livro.titulo) }}"
+                   required>
+        </div>
 
-    <label for="ano">Ano:</label>
-    <input
-        type="number"
-        id="ano"
-        name="ano"
-        min="1"
-        value="{{ livro.ano }}"
-        required
-    >
+        <div class="form-grid">
+            <div class="field">
+                <label for="autor">Autor</label>
+                <input type="text" id="autor" name="autor"
+                       class="form-control"
+                       value="{{ request.form.get('autor', livro.autor) }}"
+                       required>
+            </div>
 
-    <label for="status_leitura">Status de leitura:</label>
+            <div class="field">
+                <label for="isbn">ISBN</label>
+                <input type="text" id="isbn" name="isbn"
+                       class="form-control"
+                       value="{{ request.form.get('isbn', livro.isbn) }}"
+                       required>
+            </div>
 
-    <select id="status_leitura" name="status_leitura">
-        <option value="nao_iniciado"
-            {% if livro.status_leitura == "nao_iniciado" %}selected{% endif %}>
-            Não iniciado
-        </option>
+            <div class="field">
+                <label for="genero">Gênero</label>
+                <input type="text" id="genero" name="genero"
+                       class="form-control"
+                       value="{{ request.form.get('genero', livro.genero) }}">
+            </div>
 
-        <option value="lendo"
-            {% if livro.status_leitura == "lendo" %}selected{% endif %}>
-            Lendo
-        </option>
+            <div class="field">
+                <label for="ano">Ano de publicação</label>
+                <input type="number" id="ano" name="ano"
+                       class="form-control" min="1"
+                       value="{{ request.form.get('ano', livro.ano) }}"
+                       required>
+            </div>
+        </div>
 
-        <option value="concluido"
-            {% if livro.status_leitura == "concluido" %}selected{% endif %}>
-            Concluído
-        </option>
-    </select>
+        <div class="field">
+            <label for="status_leitura">Status de leitura</label>
 
-    <button type="submit">Salvar alterações</button>
+            {% set status_atual = request.form.get(
+                'status_leitura', livro.status_leitura
+            ) %}
 
-</form>
+            <select id="status_leitura"
+                    name="status_leitura"
+                    class="form-control">
+                <option value="nao_iniciado"
+                    {% if status_atual == "nao_iniciado" %}selected{% endif %}>
+                    Não iniciado
+                </option>
+                <option value="lendo"
+                    {% if status_atual == "lendo" %}selected{% endif %}>
+                    Lendo
+                </option>
+                <option value="concluido"
+                    {% if status_atual == "concluido" %}selected{% endif %}>
+                    Concluído
+                </option>
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <a href="{{ url_for('listar_livros') }}"
+               class="btn btn-secondary">
+                Cancelar
+            </a>
+
+            <button type="submit" class="btn btn-primary">
+                Salvar alterações
+            </button>
+        </div>
+
+    </form>
+</section>
+
+{% endblock %}
+
