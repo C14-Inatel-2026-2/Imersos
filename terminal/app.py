@@ -44,6 +44,10 @@ def converter_status(opcao_status):
 
     return status
 
+def mostrar_opcoes_status():
+    print("1 - Não iniciado")
+    print("2 - Lendo")
+    print("3 - Concluído")
 
 def ler_dados_livro():
     titulo = input("Título: ")
@@ -53,10 +57,8 @@ def ler_dados_livro():
     ano = int(input("Ano: "))
 
     print("\nStatus de leitura:")
-    print("1 - Não iniciado")
-    print("2 - Lendo")
-    print("3 - Concluído")
-
+    mostrar_opcoes_status()
+ 
     opcao_status = input("Status: ")
     status = converter_status(opcao_status)
 
@@ -88,13 +90,11 @@ def ler_dados_edicao():
 
     if ano:
         dados["ano"] = int(ano)
-
+    
     print("\nNovo status de leitura:")
-    print("1 - Não iniciado")
-    print("2 - Lendo")
-    print("3 - Concluído")
+    mostrar_opcoes_status()
     print("Enter - Manter atual")
-
+    
     opcao_status = input("Status: ").strip()
 
     if opcao_status:
