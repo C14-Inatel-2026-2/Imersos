@@ -4,8 +4,20 @@ from models.livro import Livro
 class LivroService:
     CAMPOS_BUSCA = ["titulo", "autor", "genero"]
 
-    def __init__(self, repository):
+    def __init__(self, repository, emprestimo_repository=None):
         self.repository = repository
+        self.emprestimo_repository = emprestimo_repository
+
+    
+    def _bloquear_se_emprestado(self, isbn, mensagem):
+        if self.emprestimo_repository is None:
+            return
+
+        emprestimos = self.emprestimo_repository.carregar()
+
+        if any(item["isbn"] == isbn for item in emprestimos):
+            raise ValueError(mensagem)
+
 
     def _para_dict(self, livro):
         return {
@@ -123,10 +135,14 @@ class LivroService:
     def listar_livros(self):
         return self._filtrar_livros()
 
+
     def editar_livro(self, isbn, dados):
         livros = self.repository.carregar()
 
-        indice = self._obter_indice_existente(livros, isbn)
+        indice = self._buscar_indice_por_isbn(livros, isbn)
+
+        if indice is None:
+            raise ValueError("Livro não encontrado")
 
         dados_atualizados = {
             **livros[indice],
@@ -136,6 +152,11 @@ class LivroService:
         livro = Livro(**dados_atualizados)
 
         if livro.isbn != isbn:
+            self._bloquear_se_emprestado(
+                isbn,
+                "Não é possível alterar o ISBN de um livro emprestado"
+            )
+
             self._validar_isbn_unico(
                 livros,
                 livro.isbn,
@@ -147,10 +168,19 @@ class LivroService:
 
         return livro
 
+
     def remover_livro(self, isbn):
         livros = self.repository.carregar()
 
-        indice = self._obter_indice_existente(livros, isbn)
+        indice = self._buscar_indice_por_isbn(livros, isbn)
+
+        if indice is None:
+            raise ValueError("Livro não encontrado")
+
+        self._bloquear_se_emprestado(
+            isbn,
+            "Não é possível remover um livro emprestado"
+        )
 
         livros.pop(indice)
         self.repository.salvar(livros)

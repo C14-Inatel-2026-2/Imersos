@@ -1,7 +1,13 @@
+
+from datetime import date, datetime
 from pathlib import Path
 
+from repository.emprestimo_repository import EmprestimoRepository
 from repository.livro_repository import LivroRepository
+from services.emprestimo_service import EmprestimoService
 from services.livro_service import LivroService
+from datetime import date, datetime
+
 
 def mostrar_menu():
     print("\n=== Biblioteca Imersos ===")
@@ -19,6 +25,7 @@ def mostrar_menu():
 def ler_opcao():
     return input("Escolha uma opção: ")
 
+
 def converter_status(opcao_status):
     status = {
         "1": "nao_iniciado",
@@ -30,6 +37,7 @@ def converter_status(opcao_status):
         raise ValueError("Status de leitura inválido")
 
     return status
+
 
 def ler_dados_livro():
     titulo = input("Título: ")
@@ -147,31 +155,99 @@ def remover_livro(service):
     service.remover_livro(isbn)
     print("Livro removido com sucesso!")
 
+
+
+def realizar_emprestimo(service):
+    isbn = input("ISBN do livro: ").strip()
+
+    service.verificar_disponibilidade(isbn)
+
+    pessoa = input("Emprestado para: ").strip()
+    data_texto = input(
+        "Data prevista de devolução (DD-MM-AAAA): "
+    ).strip()
+
+    try:
+        data_prevista = datetime.strptime(
+            data_texto, "%d-%m-%Y"
+        ).date()
+    except ValueError as erro:
+        raise ValueError(
+            "Data inválida. Use DD-MM-AAAA"
+        ) from erro
+
+    service.realizar_emprestimo(isbn, pessoa, data_prevista)
+
+    print("Empréstimo realizado com sucesso!")
+
+
+
+def realizar_devolucao(service):
+    isbn = input("ISBN do livro devolvido: ").strip()
+    service.realizar_devolucao(isbn)
+    print("Devolução registrada com sucesso!")
+
+
+def listar_emprestimos_atrasados(service):
+    atrasados = service.listar_atrasados()
+
+    if not atrasados:
+        print("Nenhum empréstimo atrasado.")
+        return
+
+    print("\n=== Empréstimos atrasados ===")
+
+    for item in atrasados:
+        print(
+            f"ISBN: {item['isbn']} | "
+            f"Pessoa: {item['emprestado_para']} | "
+            f"Devolução prevista: {item['data_devolucao_prevista']}"
+        )
+
+
+
 def executar():
+    pasta_dados = Path(__file__).resolve().parents[1] / "dados"
 
-    caminho = Path(__file__).resolve().parents[1] / "dados" / "livros.json"
+    livro_repository = LivroRepository(
+        pasta_dados / "livros.json"
+    )
 
-    repository = LivroRepository(caminho)
-    service = LivroService(repository)
+    emprestimo_repository = EmprestimoRepository(
+        pasta_dados / "emprestimos.json"
+    )
+
+    livro_service = LivroService(
+        livro_repository,
+        emprestimo_repository
+    )
+
+    emprestimo_service = EmprestimoService(
+        livro_repository,
+        emprestimo_repository
+    )
 
     while True:
         mostrar_menu()
-
         opcao = ler_opcao()
 
         try:
             if opcao == "1":
-                cadastrar_livro(service)
+                cadastrar_livro(livro_service)
             elif opcao == "2":
-                buscar_livro(service)
+                buscar_livro(livro_service)
             elif opcao == "3":
-                editar_livro(service)
+                editar_livro(livro_service)
             elif opcao == "4":
-                remover_livro(service)
-            elif opcao in ("5", "6", "7"):
-                print("Funcionalidade de empréstimos ainda não integrada.")
+                remover_livro(livro_service)
+            elif opcao == "5":
+                realizar_emprestimo(emprestimo_service)
+            elif opcao == "6":
+                realizar_devolucao(emprestimo_service)
+            elif opcao == "7":
+                listar_emprestimos_atrasados(emprestimo_service)
             elif opcao == "8":
-                listar_livros(service)
+                listar_livros(livro_service)
             elif opcao == "0":
                 print("Encerrando sistema...")
                 break
