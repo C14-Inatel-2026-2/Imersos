@@ -277,6 +277,36 @@ O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em ép
 
 **Pull Request:** [#34 — Refactoring do LivroService (Giuliana)](https://github.com/C14-Inatel-2026-2/Imersos/pull/34)
 
+### Empréstimo Service — Camile
+
+#### Refactoring 1 — Reutilização da consulta de empréstimos ativos
+
+**Code smell:** Duplicated Code
+
+**Técnica:** Replace Inline Code with Function Call
+
+**Problema:** O método `verificar_disponibilidade()` realizava uma busca própria por empréstimos ativos, apesar de `consultar_emprestimo()` já implementar a mesma lógica de localização por ISBN.
+
+**Solução:** A busca duplicada foi substituída por uma chamada ao método `consultar_emprestimo()`.
+
+**Justificativa:** Centralizar a consulta evita duplicação de código, facilita a manutenção e garante que a verificação de disponibilidade utilize a mesma lógica da consulta de empréstimos, sem alterar o comportamento existente.
+
+#### Refactoring 2 — Extração da montagem do registro de empréstimo
+
+**Code smell:** Multiple Responsibilities
+
+**Técnica:** Extract Method
+
+**Problema:** O método `realizar_emprestimo()` era responsável tanto por validar e registrar um empréstimo quanto por montar o dicionário utilizado na persistência JSON.
+
+**Solução:** Foi criado o método `_montar_registro_emprestimo()`, responsável pela conversão dos dados do empréstimo para o formato persistido.
+
+**Justificativa:** A extração separa responsabilidades, melhora a legibilidade e facilita futuras alterações no formato de persistência, preservando o comportamento original.
+
+**Testes:** A suíte de testes foi executada antes e depois dos refactorings, incluindo novos testes de regressão para disponibilidade e persistência.
+
+**Pull Request:** Adicionar o link da PR após sua criação.
+
 ## Uso de IA
 
 Durante o desenvolvimento do Imersos, ferramentas de inteligência artificial foram utilizadas como apoio em diferentes etapas do projeto. As sugestões foram analisadas pelos integrantes antes de serem aplicadas, respeitando os requisitos definidos para o trabalho.
