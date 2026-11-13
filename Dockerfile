@@ -7,18 +7,18 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
-# Copia os módulos necessários da aplicação
 COPY models/ ./models/
 COPY repository/ ./repository/
 COPY services/ ./services/
 COPY terminal/ ./terminal/
+COPY web_server.py ./web_server.py
 
-# Prepara o diretório de persistência
 RUN mkdir -p /app/dados && \
     useradd --create-home imersos && \
     chown -R imersos:imersos /app/dados
 
-# Executa sem privilégios de administrador
 USER imersos
 
-CMD ["python", "-m", "terminal.app"]
+EXPOSE 10000
+
+CMD ["python", "web_server.py"]
