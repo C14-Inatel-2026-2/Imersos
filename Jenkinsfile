@@ -219,5 +219,47 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy - Render') {
+            when {
+                beforeAgent true
+                expression {
+                    env.GIT_BRANCH == 'origin/main' ||
+                    env.GIT_BRANCH == 'main' ||
+                    env.BRANCH_NAME == 'main'
+                }
+            }
+
+            agent {
+                label 'windows-docker'
+            }
+
+            steps {
+                withCredentials([
+                    string(
+                        credentialsId: 'render-deploy-hook',
+                        variable: 'RENDER_DEPLOY_HOOK'
+                    )
+                ]) {
+                    powershell '''
+                        $ErrorActionPreference = "Stop"
+
+                        Write-Host "Solicitando deploy no Render..."
+
+                        $resposta = Invoke-WebRequest `
+                            -Uri $env:RENDER_DEPLOY_HOOK `
+                            -Method POST `
+                            -UseBasicParsing `
+                            -TimeoutSec 30
+
+                        if ($resposta.StatusCode -notin @(200, 202)) {
+                            throw "Render recusou a solicitacao de deploy"
+                        }
+
+                        Write-Host "Solicitacao aceita pelo Render."
+                    '''
+                }
+            }
+        }
     }
 }
