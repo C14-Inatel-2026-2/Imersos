@@ -6,6 +6,12 @@ from terminal.app import (
     listar_emprestimos_atrasados,
 )
 
+from terminal.app import (
+    realizar_emprestimo,
+    realizar_devolucao,
+    listar_emprestimos_atrasados,
+)
+
 
 def test_menu_realizar_emprestimo(mocker, capsys):
     service = mocker.Mock()
@@ -36,3 +42,17 @@ def test_menu_listar_atrasados(mocker, capsys):
     listar_emprestimos_atrasados(service)
 
     assert "123" in capsys.readouterr().out
+
+def test_menu_realizar_devolucao(mocker, capsys):
+    service = mocker.Mock()
+
+    mocker.patch(
+        "builtins.input",
+        return_value="123"
+    )
+
+    realizar_devolucao(service)
+
+    service.realizar_devolucao.assert_called_once_with("123")
+
+    assert "Devolução registrada com sucesso!" in capsys.readouterr().out

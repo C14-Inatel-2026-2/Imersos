@@ -196,6 +196,13 @@ def listar_emprestimos_atrasados(service):
             f"Devolução prevista: {item['data_devolucao_prevista']}"
         )
 
+def realizar_devolucao(service):
+    isbn = input("ISBN do livro devolvido: ").strip()
+
+    service.realizar_devolucao(isbn)
+
+    print("Devolução registrada com sucesso!")
+
 
 
 def executar():
@@ -235,7 +242,7 @@ def executar():
             elif opcao == "5":
                 realizar_emprestimo(emprestimo_service)
             elif opcao == "6":
-                print("Função de devolução ainda não implementada.")
+                realizar_devolucao(emprestimo_service)
             elif opcao == "7":
                 listar_emprestimos_atrasados(emprestimo_service)
             elif opcao == "8":

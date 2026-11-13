@@ -69,3 +69,21 @@ class EmprestimoService:
                 return registro
 
         return None
+
+    def realizar_devolucao(self, isbn):
+        isbn = isbn.strip()
+
+        livros = self.livro_repository.carregar()
+
+        if not any(livro["isbn"] == isbn for livro in livros):
+            raise ValueError("Livro não encontrado")
+
+        emprestimos = self.emprestimo_repository.carregar()
+
+        for indice, registro in enumerate(emprestimos):
+            if registro["isbn"] == isbn:
+                devolvido = emprestimos.pop(indice)
+                self.emprestimo_repository.salvar(emprestimos)
+                return devolvido
+
+        raise ValueError("Livro não está emprestado")
