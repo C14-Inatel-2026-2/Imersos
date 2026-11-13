@@ -141,6 +141,88 @@ def test_consultar_emprestimo_persistido(service):
     assert outro_service.consultar_emprestimo("999") is None
 
 
+def test_devolucao_remove_emprestimo_ativo(service):
+    service.realizar_emprestimo(
+        "123",
+        "Ana",
+        date(2026, 11, 20),
+        date(2026, 11, 13)
+    )
+
+    devolvido = service.realizar_devolucao("123")
+
+    assert devolvido["isbn"] == "123"
+    assert devolvido["emprestado_para"] == "Ana"
+    assert service.consultar_emprestimo("123") is None
+    assert service.emprestimo_repository.carregar() == []
+
+
+def test_devolucao_livro_nao_emprestado_nao_altera_dados(service):
+    dados_anteriores = service.emprestimo_repository.carregar()
+
+    with pytest.raises(
+        ValueError,
+        match="Livro não está emprestado"
+    ):
+        service.realizar_devolucao("123")
+
+    assert service.emprestimo_repository.carregar() == dados_anteriores
+
+
+def test_devolucao_isbn_inexistente_nao_altera_dados(service):
+    dados_anteriores = service.emprestimo_repository.carregar()
+
+    with pytest.raises(
+        ValueError,
+        match="Livro não encontrado"
+    ):
+        service.realizar_devolucao("999")
+
+    assert service.emprestimo_repository.carregar() == dados_anteriores
+
+
+def test_permite_emprestar_novamente_apos_devolucao(service):
+    service.realizar_emprestimo(
+        "123",
+        "Ana",
+        date(2026, 11, 20),
+        date(2026, 11, 13)
+    )
+
+    service.realizar_devolucao("123")
+
+    novo_emprestimo = service.realizar_emprestimo(
+        "123",
+        "Bia",
+        date(2026, 11, 30),
+        date(2026, 11, 21)
+    )
+
+    assert novo_emprestimo["isbn"] == "123"
+    assert novo_emprestimo["emprestado_para"] == "Bia"
+    assert service.consultar_emprestimo("123") == novo_emprestimo
+
+
+def test_permite_remover_livro_apos_devolucao(service):
+    service.realizar_emprestimo(
+        "123",
+        "Ana",
+        date(2026, 11, 20),
+        date(2026, 11, 13)
+    )
+
+    service.realizar_devolucao("123")
+
+    livro_service = LivroService(
+        service.livro_repository,
+        service.emprestimo_repository
+    )
+
+    livro_service.remover_livro("123")
+
+    assert service.livro_repository.carregar() == []
+
+
 def test_disponibilidade_antes_e_depois_do_emprestimo(service):
     assert service.verificar_disponibilidade(" 123 ") is True
 
@@ -171,3 +253,4 @@ def test_registro_emprestimo_preserva_formato_json(service):
     }
 
     assert service.emprestimo_repository.carregar() == [registro]
+
