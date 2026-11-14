@@ -5,7 +5,7 @@
 
 O **Imersos** é um sistema de gerenciamento de biblioteca pessoal que roda no terminal. Ele permite cadastrar livros com título, autor, ISBN, gênero, ano e status de leitura, buscar livros no acervo, acompanhar o progresso de leitura e controlar empréstimos, registrando para quem o livro foi emprestado e até quando deve ser devolvido.
 
-O sistema não tem interface gráfica nem banco de dados: a interação é feita por um menu no terminal (`input()`/`print()`) e os dados ficam salvos em um arquivo JSON local.
+O sistema possui interface web desenvolvida com Flask e interface de terminal (`input()`/`print()`). Os dados são armazenados em arquivos JSON locais, sem banco de dados.
 
 ### Estrutura do projeto
 
@@ -125,6 +125,53 @@ poetry install --no-root
 
 ```
 
+### Executar a interface web
+
+O Imersos também possui uma interface web desenvolvida com Flask,
+que permite listar, buscar, cadastrar, editar e remover livros
+diretamente pelo navegador.
+
+Após instalar as dependências, crie um arquivo `.env`
+na raiz do projeto, utilizando `.env.example` como referência.
+
+Gere uma chave secreta:
+
+```bash
+poetry run python -c "import secrets; print(secrets.token_hex(32))"
+```
+
+Adicione o resultado ao `.env`:
+
+```env
+SECRET_KEY=sua_chave_gerada
+```
+
+Para iniciar a aplicação:
+
+```bash
+poetry run flask --app app run --debug
+```
+
+Acesse: http://127.0.0.1:5000
+
+A interface web utiliza os mesmos serviços e arquivos JSON
+da aplicação de terminal.
+
+**Observação:** a execução acima é destinada ao ambiente local
+de desenvolvimento.
+
+### Persistência dos dados no Render
+
+A aplicação utiliza arquivos JSON locais para armazenar os dados dos livros e empréstimos.
+
+Nos testes automatizados, são utilizados arquivos temporários por meio do `tmp_path` do Pytest, evitando alterações nos arquivos reais da aplicação.
+
+No Render, o sistema de arquivos é efêmero por padrão. Isso significa que alterações realizadas nos arquivos JSON durante a execução podem ser perdidas quando o serviço for reiniciado ou receber um novo deploy.
+
+Em serviços gratuitos do Render, os dados locais também podem ser perdidos quando a aplicação entra em estado de inatividade. Além disso, o plano gratuito não permite o uso de Persistent Disk.
+
+Por esse motivo, a persistência em JSON é adequada para o projeto e para testes, mas possui limitações no ambiente de hospedagem. Para uma aplicação em produção, seria recomendado utilizar um banco de dados ou um serviço pago com armazenamento persistente.
+
 ### Executar a aplicação
 
 A interface principal está localizada em `terminal/app.py`. A execução interativa completa depende da integração das operações do menu com as funcionalidades do sistema.
@@ -228,6 +275,27 @@ A Biblioteca Imersos está disponível publicamente por meio do Render, com depl
 **Health Check:** https://imersos-c14.onrender.com/health
 
 A interface web foi desenvolvida com Flask e permite cadastrar, listar, buscar, editar e remover livros, além de gerenciar seus status de leitura.
+
+
+### Integração web - Tarefas do Jira
+
+**SCRUM-55 - Atualizar README para incluir a interface web**
+
+Documentação das funcionalidades da interface Flask, das
+instruções de execução local, da URL pública no Render
+e das limitações da persistência em JSON.
+
+**SCRUM-56 - Incluir a interface web no relatório de cobertura**
+
+Os testes automatizados da interface web estão implementados
+em `tests/test_web.py`.
+
+Na build #29, foram aprovados 124 testes, com cobertura de 87%.
+Entretanto, o relatório consolidado ainda não inclui `app.py`.
+
+Para concluir a tarefa, será necessário adicionar
+`--cov=app` ao Jenkinsfile, executar o pipeline novamente
+e atualizar os resultados da cobertura.
 
 ## Organização ágil
 
@@ -353,7 +421,7 @@ O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em ép
 
 **Testes:** A suíte de testes foi executada antes e depois dos refactorings, incluindo novos testes de regressão para disponibilidade e persistência.
 
-**Pull Request:** **Pull Request:** [#42 — Refactoring do EmprestimoService (Camile)](https://github.com/C14-Inatel-2026-2/Imersos/pull/42)
+**Pull Request:** [#42 — Refactoring do EmprestimoService (Camile)](https://github.com/C14-Inatel-2026-2/Imersos/pull/42)
 
 ## Uso de IA
 
