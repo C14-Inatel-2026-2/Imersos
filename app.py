@@ -208,6 +208,9 @@ def editar_livro(isbn):
             url_for("listar_livros")
         )
 
+    if request.method == "GET":
+        return render_template("editar.html", livro=livro)
+
     if request.method == "POST":
         dados = {}
 
@@ -264,33 +267,6 @@ def editar_livro(isbn):
             livro=livro,
             erro=str(erro)
         ), 400
-
-        try:
-            service.editar_livro(
-                isbn,
-                dados
-            )
-
-            flash(
-                "Livro atualizado com sucesso!",
-                "sucesso"
-            )
-
-            return redirect(
-                url_for("listar_livros")
-            )
-
-        except ValueError as erro:
-            return render_template(
-                "editar.html",
-                livro=livro,
-                erro=str(erro)
-            ), 400
-
-    return render_template(
-        "editar.html",
-        livro=livro
-    )
 
 
 @app.post("/livros/<isbn>/remover")
