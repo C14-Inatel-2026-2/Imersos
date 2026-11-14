@@ -1,13 +1,14 @@
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_wtf.csrf import CSRFError, CSRFProtect
-from dotenv import load_dotenv
 
 from repository.emprestimo_repository import EmprestimoRepository
 from repository.livro_repository import LivroRepository
 from services.livro_service import LivroService
+
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
@@ -37,6 +38,7 @@ service = LivroService(
 @app.get("/")
 def index():
     return render_template("index.html")
+
 
 @app.get("/health")
 def health():
@@ -92,10 +94,16 @@ def listar_livros():
 
 @app.post("/livros/<isbn>/status")
 def alterar_status_livro(isbn):
-    novo_status = request.form.get("status_leitura", "").strip()
+    novo_status = request.form.get(
+        "status_leitura",
+        ""
+    ).strip()
 
     try:
-        service.alterar_status(isbn, novo_status)
+        service.alterar_status(
+            isbn,
+            novo_status
+        )
 
         flash(
             "Status de leitura atualizado com sucesso!",
@@ -105,7 +113,9 @@ def alterar_status_livro(isbn):
     except ValueError as erro:
         flash(str(erro), "erro")
 
-    return redirect(url_for("listar_livros"))
+    return redirect(
+        url_for("listar_livros")
+    )
 
 
 @app.route("/cadastrar", methods=["GET", "POST"])
@@ -113,7 +123,12 @@ def cadastrar_livro():
     if request.method == "POST":
 
         try:
-            ano = int(request.form.get("ano", "").strip())
+            ano = int(
+                request.form.get(
+                    "ano",
+                    ""
+                ).strip()
+            )
 
         except ValueError:
             return render_template(
@@ -122,13 +137,26 @@ def cadastrar_livro():
             ), 400
 
         dados = {
-            "titulo": request.form.get("titulo", "").strip(),
-            "autor": request.form.get("autor", "").strip(),
-            "isbn": request.form.get("isbn", "").strip(),
-            "genero": request.form.get("genero", "").strip(),
+            "titulo": request.form.get(
+                "titulo",
+                ""
+            ).strip(),
+            "autor": request.form.get(
+                "autor",
+                ""
+            ).strip(),
+            "isbn": request.form.get(
+                "isbn",
+                ""
+            ).strip(),
+            "genero": request.form.get(
+                "genero",
+                ""
+            ).strip(),
             "ano": ano,
             "status_leitura": request.form.get(
-                "status_leitura", ""
+                "status_leitura",
+                ""
             ).strip()
         }
 
@@ -140,7 +168,9 @@ def cadastrar_livro():
                 "sucesso"
             )
 
-            return redirect(url_for("cadastrar_livro"))
+            return redirect(
+                url_for("cadastrar_livro")
+            )
 
         except ValueError as erro:
             return render_template(
@@ -148,10 +178,15 @@ def cadastrar_livro():
                 erro=str(erro)
             ), 400
 
-    return render_template("cadastrar.html")
+    return render_template(
+        "cadastrar.html"
+    )
 
 
-@app.route("/livros/<isbn>/editar", methods=["GET", "POST"])
+@app.route(
+    "/livros/<isbn>/editar",
+    methods=["GET", "POST"]
+)
 def editar_livro(isbn):
 
     livro = next(
@@ -164,41 +199,66 @@ def editar_livro(isbn):
     )
 
     if livro is None:
-        flash("Livro não encontrado.", "erro")
-        return redirect(url_for("listar_livros"))
+        flash(
+            "Livro não encontrado.",
+            "erro"
+        )
+
+        return redirect(
+            url_for("listar_livros")
+        )
 
     if request.method == "POST":
+        dados = {}
+
+        campos_texto = [
+            "titulo",
+            "autor",
+            "isbn",
+            "genero",
+            "status_leitura"
+        ]
+
+        for campo in campos_texto:
+            if campo in request.form:
+                dados[campo] = (
+                    request.form[campo].strip()
+                )
+
+        if "ano" in request.form:
+            ano_texto = (
+                request.form["ano"].strip()
+            )
+
+            try:
+                dados["ano"] = int(
+                    ano_texto
+                )
+
+            except ValueError:
+                return render_template(
+                    "editar.html",
+                    livro=livro,
+                    erro=(
+                        "Informe um ano de "
+                        "publicação válido."
+                    )
+                ), 400
 
         try:
-            ano = int(request.form.get("ano", "").strip())
-
-        except ValueError:
-            return render_template(
-                "editar.html",
-                livro=livro,
-                erro="Informe um ano de publicação válido."
-            ), 400
-
-        dados = {
-            "titulo": request.form.get("titulo", "").strip(),
-            "autor": request.form.get("autor", "").strip(),
-            "isbn": request.form.get("isbn", "").strip(),
-            "genero": request.form.get("genero", "").strip(),
-            "ano": ano,
-            "status_leitura": request.form.get(
-                "status_leitura", ""
-            ).strip()
-        }
-
-        try:
-            service.editar_livro(isbn, dados)
+            service.editar_livro(
+                isbn,
+                dados
+            )
 
             flash(
                 "Livro atualizado com sucesso!",
                 "sucesso"
             )
 
-            return redirect(url_for("listar_livros"))
+            return redirect(
+                url_for("listar_livros")
+            )
 
         except ValueError as erro:
             return render_template(
@@ -216,7 +276,9 @@ def editar_livro(isbn):
 @app.post("/livros/<isbn>/remover")
 def remover_livro(isbn):
     try:
-        service.remover_livro(isbn)
+        service.remover_livro(
+            isbn
+        )
 
         flash(
             "Livro removido com sucesso!",
@@ -224,9 +286,14 @@ def remover_livro(isbn):
         )
 
     except ValueError as erro:
-        flash(str(erro), "erro")
+        flash(
+            str(erro),
+            "erro"
+        )
 
-    return redirect(url_for("listar_livros"))
+    return redirect(
+        url_for("listar_livros")
+    )
 
 
 @app.errorhandler(CSRFError)
@@ -237,5 +304,6 @@ def erro_csrf(erro):
         "erro"
     )
 
-    return redirect(url_for("index"))
-
+    return redirect(
+        url_for("index")
+    )

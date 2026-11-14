@@ -160,6 +160,18 @@ da aplicação de terminal.
 **Observação:** a execução acima é destinada ao ambiente local
 de desenvolvimento.
 
+### Persistência dos dados no Render
+
+A aplicação utiliza arquivos JSON locais para armazenar os dados dos livros e empréstimos.
+
+Nos testes automatizados, são utilizados arquivos temporários por meio do `tmp_path` do Pytest, evitando alterações nos arquivos reais da aplicação.
+
+No Render, o sistema de arquivos é efêmero por padrão. Isso significa que alterações realizadas nos arquivos JSON durante a execução podem ser perdidas quando o serviço for reiniciado ou receber um novo deploy.
+
+Em serviços gratuitos do Render, os dados locais também podem ser perdidos quando a aplicação entra em estado de inatividade. Além disso, o plano gratuito não permite o uso de Persistent Disk.
+
+Por esse motivo, a persistência em JSON é adequada para o projeto e para testes, mas possui limitações no ambiente de hospedagem. Para uma aplicação em produção, seria recomendado utilizar um banco de dados ou um serviço pago com armazenamento persistente.
+
 ### Executar a aplicação
 
 A interface principal está localizada em `terminal/app.py`. A execução interativa completa depende da integração das operações do menu com as funcionalidades do sistema.
