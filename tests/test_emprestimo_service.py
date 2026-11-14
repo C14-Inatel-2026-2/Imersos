@@ -55,13 +55,69 @@ def test_rejeita_data_anterior(service):
         )
 
 
-def test_lista_somente_atrasados(service):
+def test_lista_emprestimos_atrasados_com_titulo(service):
     service.realizar_emprestimo(
-        "123", "Ana", date(2026, 11, 13), date(2026, 11, 10)
+        "123",
+        "Ana",
+        date(2026, 11, 13),
+        date(2026, 11, 10)
     )
 
-    assert len(service.listar_atrasados(date(2026, 11, 14))) == 1
-    assert service.listar_atrasados(date(2026, 11, 13)) == []
+    atrasados = service.listar_atrasados(
+        date(2026, 11, 14)
+    )
+
+    assert len(atrasados) == 1
+    assert atrasados[0]["titulo"] == "1984"
+    assert atrasados[0]["emprestado_para"] == "Ana"
+    assert atrasados[0]["data_devolucao_prevista"] == "2026-11-13"
+
+
+def test_lista_atrasados_vazia_quando_nao_ha_atrasos(service):
+    service.realizar_emprestimo(
+        "123",
+        "Ana",
+        date(2026, 11, 20),
+        date(2026, 11, 10)
+    )
+
+    atrasados = service.listar_atrasados(
+        date(2026, 11, 14)
+    )
+
+    assert atrasados == []
+
+
+def test_nao_lista_devolucao_prevista_para_hoje(service):
+    service.realizar_emprestimo(
+        "123",
+        "Ana",
+        date(2026, 11, 14),
+        date(2026, 11, 10)
+    )
+
+    atrasados = service.listar_atrasados(
+        date(2026, 11, 14)
+    )
+
+    assert atrasados == []
+
+
+def test_nao_lista_livro_ja_devolvido_como_atrasado(service):
+    service.realizar_emprestimo(
+        "123",
+        "Ana",
+        date(2026, 11, 13),
+        date(2026, 11, 10)
+    )
+
+    service.realizar_devolucao("123")
+
+    atrasados = service.listar_atrasados(
+        date(2026, 11, 14)
+    )
+
+    assert atrasados == []
 
 
 def test_nao_permite_remover_livro_emprestado(service):

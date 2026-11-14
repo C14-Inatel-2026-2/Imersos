@@ -35,16 +35,19 @@ def test_menu_listar_atrasados(mocker, capsys):
 
     service.listar_atrasados.return_value = [{
         "isbn": "123",
+        "titulo": "1984",
         "emprestado_para": "Ana",
-        "data_devolucao_prevista": "2026-11-20",
+        "data_devolucao_prevista": "2026-11-13",
     }]
 
     listar_emprestimos_atrasados(service)
 
     saida = capsys.readouterr().out
 
-    assert "123" in saida
-    assert "20-11-2026" in saida
+    assert "1984" in saida
+    assert "Ana" in saida
+    assert "13-11-2026" in saida
+
 
 def test_menu_realizar_devolucao(mocker, capsys):
     service = mocker.Mock()
@@ -107,3 +110,14 @@ def test_cancelar_devolucao(mocker):
 
     service.realizar_devolucao.assert_not_called()
 
+
+def test_menu_informa_quando_nao_ha_atrasados(mocker, capsys):
+    service = mocker.Mock()
+    service.listar_atrasados.return_value = []
+
+    listar_emprestimos_atrasados(service)
+
+    assert (
+        "Nenhum empréstimo atrasado."
+        in capsys.readouterr().out
+    )
