@@ -117,6 +117,7 @@ pipeline {
                         --cov=repository \
                         --cov=services \
                         --cov=terminal \
+                        --cov=app \
                         --cov-report=term-missing \
                         --cov-report=html:reports/htmlcov \
                         --cov-report=xml:reports/coverage.xml
