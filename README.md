@@ -1,4 +1,14 @@
 
+
+## Aplicação web — Render
+
+A Biblioteca Imersos está disponível publicamente no Render, com deploy automatizado pelo Jenkins e Docker Hub.
+
+**Aplicação:** https://imersos-c14.onrender.com/
+
+**Health Check:** https://imersos-c14.onrender.com/health
+
+A interface web permite cadastrar, listar, buscar, editar e remover livros, além de alterar seus status de leitura.
 # 📚 Imersos — Biblioteca Pessoal
 
 ## Descrição
