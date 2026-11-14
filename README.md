@@ -125,53 +125,6 @@ poetry install --no-root
 
 ```
 
-### Executar a interface web
-
-O Imersos também possui uma interface web desenvolvida com Flask,
-que permite listar, buscar, cadastrar, editar e remover livros
-diretamente pelo navegador.
-
-Após instalar as dependências, crie um arquivo `.env`
-na raiz do projeto, utilizando `.env.example` como referência.
-
-Gere uma chave secreta:
-
-```bash
-poetry run python -c "import secrets; print(secrets.token_hex(32))"
-```
-
-Adicione o resultado ao `.env`:
-
-```env
-SECRET_KEY=sua_chave_gerada
-```
-
-Para iniciar a aplicação:
-
-```bash
-poetry run flask --app app run --debug
-```
-
-Acesse: http://127.0.0.1:5000
-
-A interface web utiliza os mesmos serviços e arquivos JSON
-da aplicação de terminal.
-
-**Observação:** a execução acima é destinada ao ambiente local
-de desenvolvimento.
-
-### Persistência dos dados no Render
-
-A aplicação utiliza arquivos JSON locais para armazenar os dados dos livros e empréstimos.
-
-Nos testes automatizados, são utilizados arquivos temporários por meio do `tmp_path` do Pytest, evitando alterações nos arquivos reais da aplicação.
-
-No Render, o sistema de arquivos é efêmero por padrão. Isso significa que alterações realizadas nos arquivos JSON durante a execução podem ser perdidas quando o serviço for reiniciado ou receber um novo deploy.
-
-Em serviços gratuitos do Render, os dados locais também podem ser perdidos quando a aplicação entra em estado de inatividade. Além disso, o plano gratuito não permite o uso de Persistent Disk.
-
-Por esse motivo, a persistência em JSON é adequada para o projeto e para testes, mas possui limitações no ambiente de hospedagem. Para uma aplicação em produção, seria recomendado utilizar um banco de dados ou um serviço pago com armazenamento persistente.
-
 ### Executar a aplicação
 
 A interface principal está localizada em `terminal/app.py`. A execução interativa completa depende da integração das operações do menu com as funcionalidades do sistema.
@@ -227,6 +180,54 @@ O arquivo `Jenkinsfile` define os estágios responsáveis por verificar o códig
 Os resultados dos testes são publicados no Jenkins utilizando relatórios JUnit, enquanto a cobertura é gerada com Pytest-Cov.
 
 O ambiente Jenkins é preparado por meio do arquivo `Dockerfile.jenkins`.
+
+8. **Deploy - Docker Hub:** após a aprovação dos testes, o Jenkins constrói uma imagem Docker da aplicação e publica no repositório `milelaraia/imersos`, utilizando uma tag com o número da execução e a tag `latest`.
+
+9. **Deploy - Render:** após a publicação da imagem, o Jenkins utiliza um Deploy Hook para solicitar automaticamente uma nova implantação no Render.
+
+### Fluxo de CI/CD
+
+O processo de integração e implantação contínua segue o fluxo:
+
+**GitHub (`main`) → Jenkins (build e testes) → Docker Hub (publicação da imagem) → Deploy Hook → Render (aplicação web)**
+
+Os estágios de deploy são executados somente para a branch `main`. As credenciais do Docker Hub e o Deploy Hook são armazenados de forma segura nas credenciais do Jenkins.
+
+### Evidências do deploy
+
+A execução do pipeline pode ser verificada por meio dos seguintes recursos:
+
+- **Aplicação web:** https://imersos-c14.onrender.com/
+- **Health Check:** https://imersos-c14.onrender.com/health
+- **Imagem Docker:** https://hub.docker.com/r/milelaraia/imersos
+
+A aplicação foi acessada no Render, sendo confirmado o carregamento da interface web e o funcionamento das operações de cadastro, listagem, busca, edição, alteração do status de leitura e remoção de livros.
+
+**Execução validada no Jenkins:**
+
+- **Build:** #29
+- **Resultado:** SUCCESS
+- **Testes aprovados:** 124
+- **Cobertura de código:** 87%
+- **Publicação no Docker Hub:** confirmada
+- **Imagem publicada:** `milelaraia/imersos:29`
+- **Tag `latest`:** atualizada com sucesso
+- **Deploy no Render:** solicitação aceita pelo Deploy Hook
+- **Validação da aplicação:** interface web acessível e funcionalidades testadas com sucesso pela URL pública
+
+A execução #29 utilizou a branch `main`, incluindo as correções da interface web incorporadas pela PR #49. O pipeline concluiu todas as etapas sem falhas.
+
+A publicação da imagem e o acionamento do Deploy Hook foram confirmados pelos logs do Jenkins. O funcionamento da interface web hospedada no Render foi verificado manualmente pelo navegador.
+
+### Aplicação web — Deploy no Render
+
+A Biblioteca Imersos está disponível publicamente por meio do Render, com deploy automatizado utilizando Jenkins e Docker Hub.
+
+**Acesse a aplicação:** https://imersos-c14.onrender.com/
+
+**Health Check:** https://imersos-c14.onrender.com/health
+
+A interface web foi desenvolvida com Flask e permite cadastrar, listar, buscar, editar e remover livros, além de gerenciar seus status de leitura.
 
 ## Organização ágil
 
@@ -352,7 +353,7 @@ O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em ép
 
 **Testes:** A suíte de testes foi executada antes e depois dos refactorings, incluindo novos testes de regressão para disponibilidade e persistência.
 
-**Pull Request:** Adicionar o link da PR após sua criação.
+**Pull Request:** **Pull Request:** [#42 — Refactoring do EmprestimoService (Camile)](https://github.com/C14-Inatel-2026-2/Imersos/pull/42)
 
 ## Uso de IA
 
