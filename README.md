@@ -276,27 +276,6 @@ A Biblioteca Imersos está disponível publicamente por meio do Render, com depl
 
 A interface web foi desenvolvida com Flask e permite cadastrar, listar, buscar, editar e remover livros, além de gerenciar seus status de leitura.
 
-
-### Integração web - Tarefas do Jira
-
-**SCRUM-55 - Atualizar README para incluir a interface web**
-
-Documentação das funcionalidades da interface Flask, das
-instruções de execução local, da URL pública no Render
-e das limitações da persistência em JSON.
-
-**SCRUM-56 - Incluir a interface web no relatório de cobertura**
-
-Os testes automatizados da interface web estão implementados
-em `tests/test_web.py`.
-
-Na build #29, foram aprovados 124 testes, com cobertura de 87%.
-Entretanto, o relatório consolidado ainda não inclui `app.py`.
-
-Para concluir a tarefa, será necessário adicionar
-`--cov=app` ao Jenkinsfile, executar o pipeline novamente
-e atualizar os resultados da cobertura.
-
 ## Organização ágil
 
 O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em épicos por módulo: *Livros*, *Empréstimos*, *Persistência* e *Interface*. Cada integrante cadastrou ao menos uma história de usuário com critérios de aceitação no formato *Given / When / Then*.
