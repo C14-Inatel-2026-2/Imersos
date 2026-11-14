@@ -221,29 +221,49 @@ def editar_livro(isbn):
 
         for campo in campos_texto:
             if campo in request.form:
-                dados[campo] = (
-                    request.form[campo].strip()
-                )
+                dados[campo] = request.form[campo].strip()
 
         if "ano" in request.form:
-            ano_texto = (
-                request.form["ano"].strip()
-            )
+            ano_texto = request.form["ano"].strip()
 
             try:
-                dados["ano"] = int(
-                    ano_texto
-                )
+                dados["ano"] = int(ano_texto)
 
             except ValueError:
                 return render_template(
                     "editar.html",
                     livro=livro,
-                    erro=(
-                        "Informe um ano de "
-                        "publicação válido."
-                    )
+                    erro="Informe um ano de publicação válido."
                 ), 400
+
+    if not dados:
+        return render_template(
+            "editar.html",
+            livro=livro,
+            erro="Nenhum dado informado para edição."
+        ), 400
+
+    try:
+        service.editar_livro(
+            isbn,
+            dados
+        )
+
+        flash(
+            "Livro atualizado com sucesso!",
+            "sucesso"
+        )
+
+        return redirect(
+            url_for("listar_livros")
+        )
+
+    except ValueError as erro:
+        return render_template(
+            "editar.html",
+            livro=livro,
+            erro=str(erro)
+        ), 400
 
         try:
             service.editar_livro(

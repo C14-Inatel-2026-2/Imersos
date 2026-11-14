@@ -552,3 +552,34 @@ def test_health(ambiente_web):
 
     assert resposta.status_code == 200
     assert resposta.json["status"] == "online"
+
+
+def test_edicao_sem_dados_nao_altera_livro(
+    ambiente_web
+):
+    cliente, servico, _ = ambiente_web
+
+    cliente.post(
+        "/cadastrar",
+        data=dados_livro()
+    )
+
+    dados_antes = carregar_json_livros(
+        servico
+    )
+
+    resposta = cliente.post(
+        "/livros/123456789/editar",
+        data={}
+    )
+
+    dados_depois = carregar_json_livros(
+        servico
+    )
+
+    assert resposta.status_code == 400
+    assert dados_depois == dados_antes
+    assert (
+        "Nenhum dado informado para edição."
+        in resposta.get_data(as_text=True)
+    )
