@@ -47,11 +47,27 @@ class EmprestimoService:
 
     def listar_atrasados(self, hoje=None):
         hoje = hoje or date.today()
-        return [
-            registro
-            for registro in self.emprestimo_repository.carregar()
-            if date.fromisoformat(registro["data_devolucao_prevista"]) < hoje
-        ]
+
+        livros = self.livro_repository.carregar()
+
+        titulos_por_isbn = {
+            livro["isbn"]: livro["titulo"]
+            for livro in livros
+        }
+
+        atrasados = []
+
+        for registro in self.emprestimo_repository.carregar():
+            data_prevista = date.fromisoformat(
+                registro["data_devolucao_prevista"]
+            )
+
+            if data_prevista < hoje:
+                atrasado = registro.copy()
+                atrasado["titulo"] = titulos_por_isbn[registro["isbn"]]
+                atrasados.append(atrasado)
+
+        return atrasados
 
     
     def verificar_disponibilidade(self, isbn):

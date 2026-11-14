@@ -211,7 +211,7 @@ def listar_emprestimos_atrasados(service):
         ).strftime("%d-%m-%Y")
 
         print(
-            f"ISBN: {item['isbn']} | "
+            f"Título: {item['titulo']} | "
             f"Pessoa: {item['emprestado_para']} | "
             f"Devolução prevista: {data_prevista}"
         )
