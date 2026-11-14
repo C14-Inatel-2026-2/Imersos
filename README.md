@@ -5,7 +5,7 @@
 
 O **Imersos** é um sistema de gerenciamento de biblioteca pessoal que roda no terminal. Ele permite cadastrar livros com título, autor, ISBN, gênero, ano e status de leitura, buscar livros no acervo, acompanhar o progresso de leitura e controlar empréstimos, registrando para quem o livro foi emprestado e até quando deve ser devolvido.
 
-O sistema não tem interface gráfica nem banco de dados: a interação é feita por um menu no terminal (`input()`/`print()`) e os dados ficam salvos em um arquivo JSON local.
+O sistema possui interface web desenvolvida com Flask e interface de terminal (`input()`/`print()`). Os dados são armazenados em arquivos JSON locais, sem banco de dados.
 
 ### Estrutura do projeto
 
@@ -228,6 +228,75 @@ Os resultados dos testes são publicados no Jenkins utilizando relatórios JUnit
 
 O ambiente Jenkins é preparado por meio do arquivo `Dockerfile.jenkins`.
 
+8. **Deploy - Docker Hub:** após a aprovação dos testes, o Jenkins constrói uma imagem Docker da aplicação e publica no repositório `milelaraia/imersos`, utilizando uma tag com o número da execução e a tag `latest`.
+
+9. **Deploy - Render:** após a publicação da imagem, o Jenkins utiliza um Deploy Hook para solicitar automaticamente uma nova implantação no Render.
+
+### Fluxo de CI/CD
+
+O processo de integração e implantação contínua segue o fluxo:
+
+**GitHub (`main`) → Jenkins (build e testes) → Docker Hub (publicação da imagem) → Deploy Hook → Render (aplicação web)**
+
+Os estágios de deploy são executados somente para a branch `main`. As credenciais do Docker Hub e o Deploy Hook são armazenados de forma segura nas credenciais do Jenkins.
+
+### Evidências do deploy
+
+A execução do pipeline pode ser verificada por meio dos seguintes recursos:
+
+- **Aplicação web:** https://imersos-c14.onrender.com/
+- **Health Check:** https://imersos-c14.onrender.com/health
+- **Imagem Docker:** https://hub.docker.com/r/milelaraia/imersos
+
+A aplicação foi acessada no Render, sendo confirmado o carregamento da interface web e o funcionamento das operações de cadastro, listagem, busca, edição, alteração do status de leitura e remoção de livros.
+
+**Execução validada no Jenkins:**
+
+- **Build:** #29
+- **Resultado:** SUCCESS
+- **Testes aprovados:** 124
+- **Cobertura de código:** 87%
+- **Publicação no Docker Hub:** confirmada
+- **Imagem publicada:** `milelaraia/imersos:29`
+- **Tag `latest`:** atualizada com sucesso
+- **Deploy no Render:** solicitação aceita pelo Deploy Hook
+- **Validação da aplicação:** interface web acessível e funcionalidades testadas com sucesso pela URL pública
+
+A execução #29 utilizou a branch `main`, incluindo as correções da interface web incorporadas pela PR #49. O pipeline concluiu todas as etapas sem falhas.
+
+A publicação da imagem e o acionamento do Deploy Hook foram confirmados pelos logs do Jenkins. O funcionamento da interface web hospedada no Render foi verificado manualmente pelo navegador.
+
+### Aplicação web — Deploy no Render
+
+A Biblioteca Imersos está disponível publicamente por meio do Render, com deploy automatizado utilizando Jenkins e Docker Hub.
+
+**Acesse a aplicação:** https://imersos-c14.onrender.com/
+
+**Health Check:** https://imersos-c14.onrender.com/health
+
+A interface web foi desenvolvida com Flask e permite cadastrar, listar, buscar, editar e remover livros, além de gerenciar seus status de leitura.
+
+
+### Integração web - Tarefas do Jira
+
+**SCRUM-55 - Atualizar README para incluir a interface web**
+
+Documentação das funcionalidades da interface Flask, das
+instruções de execução local, da URL pública no Render
+e das limitações da persistência em JSON.
+
+**SCRUM-56 - Incluir a interface web no relatório de cobertura**
+
+Os testes automatizados da interface web estão implementados
+em `tests/test_web.py`.
+
+Na build #29, foram aprovados 124 testes, com cobertura de 87%.
+Entretanto, o relatório consolidado ainda não inclui `app.py`.
+
+Para concluir a tarefa, será necessário adicionar
+`--cov=app` ao Jenkinsfile, executar o pipeline novamente
+e atualizar os resultados da cobertura.
+
 ## Organização ágil
 
 O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em épicos por módulo: *Livros*, *Empréstimos*, *Persistência* e *Interface*. Cada integrante cadastrou ao menos uma história de usuário com critérios de aceitação no formato *Given / When / Then*.
@@ -352,7 +421,7 @@ O projeto é organizado com **Scrum** no **Jira**, com o backlog dividido em ép
 
 **Testes:** A suíte de testes foi executada antes e depois dos refactorings, incluindo novos testes de regressão para disponibilidade e persistência.
 
-**Pull Request:** Adicionar o link da PR após sua criação.
+**Pull Request:** [#42 — Refactoring do EmprestimoService (Camile)](https://github.com/C14-Inatel-2026-2/Imersos/pull/42)
 
 ## Uso de IA
 
