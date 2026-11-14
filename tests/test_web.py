@@ -272,12 +272,3 @@ def test_health(ambiente_web):
 
     assert resposta.status_code == 200
     assert resposta.json["status"] == "online"
-
-
-def test_health(ambiente_web):
-    cliente, _, _ = ambiente_web
-
-    resposta = cliente.get("/health")
-
-    assert resposta.status_code == 200
-    assert resposta.json["status"] == "online"
