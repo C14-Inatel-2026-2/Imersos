@@ -263,3 +263,21 @@ def test_busca_com_campo_invalido(ambiente_web):
     resposta = cliente.get("/livros?termo=x&campo=isbn")
 
     assert "Campo de busca invalido" in resposta.get_data(as_text=True)
+
+
+def test_health(ambiente_web):
+    cliente, _, _ = ambiente_web
+
+    resposta = cliente.get("/health")
+
+    assert resposta.status_code == 200
+    assert resposta.json["status"] == "online"
+
+
+def test_health(ambiente_web):
+    cliente, _, _ = ambiente_web
+
+    resposta = cliente.get("/health")
+
+    assert resposta.status_code == 200
+    assert resposta.json["status"] == "online"

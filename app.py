@@ -38,6 +38,13 @@ service = LivroService(
 def index():
     return render_template("index.html")
 
+@app.get("/health")
+def health():
+    return {
+        "aplicacao": "Biblioteca Imersos",
+        "status": "online"
+    }, 200
+
 
 @app.get("/livros")
 def listar_livros():
