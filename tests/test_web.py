@@ -583,3 +583,13 @@ def test_edicao_sem_dados_nao_altera_livro(
         "Nenhum dado informado para edição."
         in resposta.get_data(as_text=True)
     )
+
+def test_abrir_formulario_edicao(ambiente_web):
+    cliente, servico, _ = ambiente_web
+
+    cadastrar(servico, "123", "Duna")
+
+    resposta = cliente.get("/livros/123/editar")
+
+    assert resposta.status_code == 200
+    assert "Duna" in resposta.get_data(as_text=True)
